@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FacebookMessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('facebook/messages')->group(function () {
+    Route::get('', [FacebookMessageController::class, 'index']);
+
+    Route::post('', [FacebookMessageController::class, 'store']);
 });
