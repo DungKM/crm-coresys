@@ -2,10 +2,11 @@
 
 return [
     [
-        'key'        => 'leadassignment',
-        'name'       => 'LeadAssignment',
-        'route'      => 'admin.leadassignment.index',
-        'sort'       => 2,
-        'icon-class' => 'temp-icon',
-    ]
+        'key' => 'settings.lead.lead-assignment',
+        'name' => 'Lead Assignment',
+        'route' => 'admin.settings.lead_assignment.index',
+        'sort' => 20,
+        'icon-class' => 'icon-lead-assignment',
+        'parent' => 'settings.lead',
+    ],
 ];
