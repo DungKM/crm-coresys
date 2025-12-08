@@ -15,20 +15,18 @@ class PersonFactory extends Factory
     public function definition(): array
     {
         $userId = class_exists(User::class) ? User::inRandomOrder()->value('id') : null;
-        $orgId  = class_exists(Organization::class) ? Organization::inRandomOrder()->value('id') : null;
+        $orgId = class_exists(Organization::class) ? Organization::inRandomOrder()->value('id') : null;
 
         return [
             'name' => $this->faker->name(),
             'emails' => [
-                $this->faker->unique()->safeEmail(),
-                ...($this->faker->boolean(30) ? [$this->faker->safeEmail()] : []),
+                ['value' => $this->faker->unique()->safeEmail(), 'label' => 'work'],
+                ...($this->faker->boolean(30) ? [['value' => $this->faker->safeEmail(), 'label' => 'personal']] : []),
             ],
-
             'contact_numbers' => [
-                $this->faker->numerify('0#########'),  // ví dụ 0xxxxxxxxx
-                ...($this->faker->boolean(25) ? [$this->faker->numerify('0#########')] : []),
+                ['value' => $this->faker->numerify('0#########'), 'label' => 'mobile'],
+                ...($this->faker->boolean(25) ? [['value' => $this->faker->numerify('0#########'), 'label' => 'home']] : []),
             ],
-
             'job_title' => $this->faker->jobTitle(),
             'user_id' => $userId,
             'organization_id' => $orgId,

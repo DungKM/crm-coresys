@@ -18,16 +18,13 @@ class OrganizationFactory extends Factory
 
         return [
             'name' => $this->faker->company(),
-
-            // address cast array -> lưu json
             'address' => [
-                'street'  => $this->faker->streetAddress(),
-                'city'    => $this->faker->city(),
-                'state'   => $this->faker->state(),
-                'zip'     => $this->faker->postcode(),
+                'street' => $this->faker->streetAddress(),
+                'city' => $this->faker->city(),
+                'state' => $this->faker->state(),
+                'zip' => $this->faker->postcode(),
                 'country' => $this->faker->country(),
             ],
-
             'user_id' => $userId,
         ];
     }

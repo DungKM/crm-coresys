@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 use Webkul\Lead\Models\Lead;
 
 /**
@@ -18,6 +19,16 @@ class LeadFactory extends Factory
      */
     public function definition(): array
     {
+        // Lấy các ID hợp lệ từ DB
+        $userId = class_exists('Webkul\\User\\Models\\User') ? \Webkul\User\Models\User::inRandomOrder()->value('id') : null;
+        $personId = class_exists('Webkul\\Contact\\Models\\Person') ? \Webkul\Contact\Models\Person::inRandomOrder()->value('id') : null;
+
+        // Lấy pipeline và stage từ DB nếu có, nếu không thì null
+        $pipelineId = DB::table('lead_pipelines')->inRandomOrder()->value('id');
+        $stageId = $pipelineId ? DB::table('lead_pipeline_stages')->where('lead_pipeline_id', $pipelineId)->inRandomOrder()->value('id') : null;
+        $sourceId = DB::table('lead_sources')->inRandomOrder()->value('id');
+        $typeId = DB::table('lead_types')->inRandomOrder()->value('id');
+
         return [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
@@ -25,15 +36,16 @@ class LeadFactory extends Factory
             'status' => 1,
             'lost_reason' => null,
             'closed_at' => null,
-            'user_id' => null, // hoặc random từ User nếu cần
-            'person_id' => null, // hoặc random từ Person nếu cần
-            'lead_source_id' => null,
-            'lead_type_id' => null,
-            'lead_pipeline_id' => null,
-            'lead_pipeline_stage_id' => null,
+            'user_id' => $userId,
+            'person_id' => $personId,
+            'lead_source_id' => $sourceId,
+            'lead_type_id' => $typeId,
+            'lead_pipeline_id' => $pipelineId,
+            'lead_pipeline_stage_id' => $stageId,
             'created_at' => now(),
             'updated_at' => now(),
             'expected_close_date' => $this->faker->date(),
         ];
+
     }
 }
