@@ -1,0 +1,20 @@
+{
+    "name": "webkul/data-collection",
+    "description": "Data Collection Module for Krayin CRM",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Webkul",
+            "email": "support@webkul.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\DataCollection\\": "src/"
+        }
+    }
+}

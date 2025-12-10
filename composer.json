@@ -49,7 +49,10 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [],
+            "providers": [
+            "Webkul\\DataCollection\\Providers\\DataCollectionServiceProvider"
+            ]
         }
     },
     "autoload": {
@@ -62,6 +65,7 @@
             "Webkul\\Attribute\\": "packages/Webkul/Attribute/src",
             "Webkul\\Contact\\": "packages/Webkul/Contact/src",
             "Webkul\\Core\\": "packages/Webkul/Core/src",
+            "Webkul\\DataCollection\\": "packages/Webkul/DataCollection/src/",
             "Webkul\\DataGrid\\": "packages/Webkul/DataGrid/src",
             "Webkul\\DataTransfer\\": "packages/Webkul/DataTransfer/src",
             "Webkul\\Email\\": "packages/Webkul/Email/src",
