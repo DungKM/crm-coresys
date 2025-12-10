@@ -8,6 +8,9 @@ import.meta.glob(["../images/**", "../fonts/**"]);
  */
 import { createApp } from "vue/dist/vue.esm-bundler";
 
+// Expose Vue globally for other packages/modules to use
+window.Vue = { createApp };
+
 /**
  * Main root application registry.
  */
@@ -16,16 +19,16 @@ window.app = createApp({
         return {
             isMenuActive: false,
 
-            hoveringMenu: '',
+            hoveringMenu: "",
         };
     },
 
     created() {
-        window.addEventListener('click', this.handleFocusOut);
+        window.addEventListener("click", this.handleFocusOut);
     },
 
     beforeDestroy() {
-        window.removeEventListener('click', this.handleFocusOut);
+        window.removeEventListener("click", this.handleFocusOut);
     },
 
     methods: {
@@ -35,13 +38,15 @@ window.app = createApp({
             setTimeout(() => {
                 const errorKeys = Object.entries(errors)
                     .map(([key, value]) => ({ key, value }))
-                    .filter(error => error["value"].length);
+                    .filter((error) => error["value"].length);
 
-                let firstErrorElement = document.querySelector('[name="' + errorKeys[0]["key"] + '"]');
+                let firstErrorElement = document.querySelector(
+                    '[name="' + errorKeys[0]["key"] + '"]'
+                );
 
                 firstErrorElement.scrollIntoView({
                     behavior: "smooth",
-                    block: "center"
+                    block: "center",
                 });
             }, 100);
         },
@@ -53,12 +58,11 @@ window.app = createApp({
 
             const parentElement = event.currentTarget.parentElement;
 
-            if (parentElement.classList.contains('sidebar-collapsed')) {
-                parentElement.classList.remove('sidebar-collapsed');
+            if (parentElement.classList.contains("sidebar-collapsed")) {
+                parentElement.classList.remove("sidebar-collapsed");
 
-                parentElement.classList.add('sidebar-not-collapsed');
+                parentElement.classList.add("sidebar-not-collapsed");
             }
-
         },
 
         handleMouseLeave(event) {
@@ -68,28 +72,25 @@ window.app = createApp({
 
             const parentElement = event.currentTarget.parentElement;
 
-            if (parentElement.classList.contains('sidebar-not-collapsed')) {
-                parentElement.classList.remove('sidebar-not-collapsed');
+            if (parentElement.classList.contains("sidebar-not-collapsed")) {
+                parentElement.classList.remove("sidebar-not-collapsed");
 
-                parentElement.classList.add('sidebar-collapsed');
+                parentElement.classList.add("sidebar-collapsed");
             }
         },
 
         handleFocusOut(event) {
             const sidebar = this.$refs.sidebar;
 
-            if (
-                sidebar &&
-                !sidebar.contains(event.target)
-            ) {
+            if (sidebar && !sidebar.contains(event.target)) {
                 this.isMenuActive = false;
 
                 const parentElement = sidebar.parentElement;
 
-                if (parentElement.classList.contains('sidebar-not-collapsed')) {
-                    parentElement.classList.remove('sidebar-not-collapsed');
+                if (parentElement.classList.contains("sidebar-not-collapsed")) {
+                    parentElement.classList.remove("sidebar-not-collapsed");
 
-                    parentElement.classList.add('sidebar-collapsed');
+                    parentElement.classList.add("sidebar-collapsed");
                 }
             }
         },
@@ -131,4 +132,3 @@ app.directive("safe-html", DOMPurify);
 app.directive("tooltip", ToolTip);
 
 export default app;
-
