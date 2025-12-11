@@ -27,7 +27,8 @@ export default {
                       this.leadAssignmentConfig["lead_assignment.active_users"]
                   )
                 : [],
-            userStars: this.initUserStars(),
+            userStars: {},
+            hoveredStar: {},
         };
     },
     computed: {
@@ -58,6 +59,9 @@ export default {
             salesUsers: this.salesUsers,
             config: this.leadAssignmentConfig,
         });
+
+        // Initialize user stars after component is mounted
+        this.userStars = this.initUserStars();
     },
     methods: {
         initUserStars() {
@@ -97,8 +101,24 @@ export default {
         clearAll() {
             this.selectedUserIds = [];
         },
+        setHoveredStar(userId, star) {
+            if (star === null) {
+                delete this.hoveredStar[userId];
+            } else {
+                this.hoveredStar[userId] = star;
+            }
+        },
         setUserStars(userId, stars) {
-            this.$set(this.userStars, userId, stars);
+            console.log("[LeadAssignment] setUserStars called:", userId, stars);
+            // Allow deselecting by clicking the same star again (optional UX)
+            if (this.userStars[userId] === stars) {
+                this.userStars[userId] = 1;
+            } else {
+                this.userStars[userId] = stars;
+            }
+            // Clear hover state after click so the actual rating shows
+            delete this.hoveredStar[userId];
+            console.log("[LeadAssignment] Updated userStars:", this.userStars);
         },
         weightedPercent(userId) {
             const totalStars = this.selectedUserIds.reduce(
@@ -222,8 +242,19 @@ export default {
                                         <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</td>
                                         <td class="px-6 py-3 text-xs text-gray-500 dark:text-gray-400">{{ user.email }}</td>
                                         <td class="px-6 py-3">
-                                            <div v-if="form.method === 'weighted' && selectedUserIds.includes(user.id)" class="star-rating weights-input flex gap-1">
-                                                <span v-for="i in 5" :key="i" class="star cursor-pointer text-xl select-none" :style="{ color: i <= (userStars[user.id] || 1) ? '#fbbf24' : '#d1d5db' }" @click="setUserStars(user.id, i)">★</span>
+                                            <div 
+                                                v-if="form.method === 'weighted' && selectedUserIds.includes(user.id)" 
+                                                class="star-rating weights-input flex gap-1"
+                                                @mouseleave="setHoveredStar(user.id, null)"
+                                            >
+                                                <span
+                                                    v-for="i in 5"
+                                                    :key="i"
+                                                    class="star cursor-pointer text-xl select-none transition-colors"
+                                                    :style="{ color: i <= (hoveredStar[user.id] !== undefined ? hoveredStar[user.id] : (userStars[user.id] || 1)) ? '#fbbf24' : '#d1d5db' }"
+                                                    @mouseenter="setHoveredStar(user.id, i)"
+                                                    @click="setUserStars(user.id, i)"
+                                                >★</span>
                                             </div>
                                         </td>
                                         <td class="px-6 py-3">
