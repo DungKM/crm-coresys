@@ -1,0 +1,13 @@
+{
+    "name": "webkul/customer-data",
+    "description": "Customer Data Module for Krayin CRM",
+    "type": "library",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\CustomerData\\": "src/"
+        }
+    }
+}
