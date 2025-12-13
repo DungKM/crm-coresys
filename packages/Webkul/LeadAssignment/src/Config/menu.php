@@ -3,10 +3,10 @@
 return [
     [
         'key' => 'settings.lead.lead-assignment',
-        'name' => 'Lead Assignment',
+        'name' => 'leadassignment::app.lead-assignment.menu',
         'route' => 'admin.settings.lead_assignment.index',
         'sort' => 20,
-        'icon-class' => 'icon-lead-assignment',
-        'parent' => 'settings.lead',
+        'icon-class' => 'icon-system-generate',
+        'info' => 'leadassignment::app.lead-assignment.info',
     ],
 ];

@@ -1,12 +1,4 @@
 {
-  "packages/Webkul/LeadAssignment/src/Resources/assets/images/Icon-Temp-Active.svg": {
-    "file": "assets/Icon-Temp-Active-3jOJo91L.svg",
-    "src": "packages/Webkul/LeadAssignment/src/Resources/assets/images/Icon-Temp-Active.svg"
-  },
-  "packages/Webkul/LeadAssignment/src/Resources/assets/images/Icon-Temp.svg": {
-    "file": "assets/Icon-Temp-CaxNxvNj.svg",
-    "src": "packages/Webkul/LeadAssignment/src/Resources/assets/images/Icon-Temp.svg"
-  },
   "packages/Webkul/LeadAssignment/src/Resources/assets/js/app.js": {
     "file": "assets/app-7UicnGib.js",
     "name": "app",
