@@ -18,17 +18,21 @@ class TestLeadAssignment extends Command
 
         // Kiểm tra cấu hình hiện tại
         $config = DB::table('core_config')
-            ->whereIn('code', ['lead_assignment.enabled', 'lead_assignment.method', 'lead_assignment.active_users'])
+            ->whereIn('code', ['lead_assignment.enabled', 'lead_assignment.method', 'lead_assignment.active_users', 'lead_assignment.last_assigned_index'])
             ->pluck('value', 'code');
 
         $enabled = (int) ($config['lead_assignment.enabled'] ?? 0);
         $method = $config['lead_assignment.method'] ?? 'round_robin';
         $activeUsers = json_decode($config['lead_assignment.active_users'] ?? '[]', true) ?: [];
+        $lastIndexBefore = (int) ($config['lead_assignment.last_assigned_index'] ?? 0);
 
         $this->info("=== Cấu hình hiện tại ===");
         $this->line("Trạng thái: " . ($enabled ? '🟢 BẬT' : '🔴 TẮT'));
         $this->line("Phương thức: {$method}");
         $this->line("Sales users: " . (count($activeUsers) ? implode(', ', $activeUsers) : '(không có)'));
+        if ($method === 'round_robin') {
+            $this->line("last_assigned_index (trước): {$lastIndexBefore}");
+        }
         $this->newLine();
 
         if (!$enabled || empty($activeUsers)) {
@@ -87,6 +91,16 @@ class TestLeadAssignment extends Command
         }
 
         $this->table(['User ID', 'Tên', 'Số lead', 'Phần trăm'], $table);
+
+        // Hiển thị last_assigned_index sau khi test
+        if ($method === 'round_robin') {
+            $this->newLine();
+            $lastIndexAfter = DB::table('core_config')
+                ->where('code', 'lead_assignment.last_assigned_index')
+                ->value('value');
+            $this->line("last_assigned_index (sau): {$lastIndexAfter}");
+            $this->line("Số bước chuyển: {$count}");
+        }
 
         // Hiển thị danh sách lead vừa tạo
         $this->newLine();

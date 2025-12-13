@@ -51,6 +51,19 @@ class LeadAssignmentService
 
     /**
      * Round-robin assignment with index persisted in core_config.
+     * 
+     * Logic:
+     * 1. Load current last_assigned_index with database lock
+     * 2. Calculate next index: (last + 1) % count(users)
+     * 3. Get user at next index
+     * 4. Update last_assigned_index to next index
+     * 5. Return user_id
+     * 
+     * This ensures fair distribution where each user gets ⌊N/M⌋ or ⌈N/M⌉ leads
+     * (where N = total leads, M = number of active users)
+     * 
+     * Uses database transaction with lockForUpdate() to prevent race conditions
+     * when multiple leads are created simultaneously.
      */
     protected function assignRoundRobin(array $activeUsers): ?int
     {
@@ -68,6 +81,7 @@ class LeadAssignmentService
             $nextIndex = ($lastIndex + 1) % count($activeUsers);
             $userId = $activeUsers[$nextIndex];
 
+            // Update the index for next assignment
             DB::table('core_config')
                 ->where('code', 'lead_assignment.last_assigned_index')
                 ->update(['value' => $nextIndex, 'updated_at' => now()]);
@@ -78,6 +92,19 @@ class LeadAssignmentService
 
     /**
      * Weighted random assignment using percentage weights.
+     * 
+     * Logic:
+     * 1. Build a pool array with user_ids repeated by their weight
+     * 2. Randomly pick one user_id from the pool
+     * 3. Probability is proportional to weight
+     * 
+     * Note: This method does NOT use last_assigned_index.
+     * Each assignment is independent and random based on weights.
+     * 
+     * Example: 
+     * - User A with 5 stars (100%): appears 100 times in pool
+     * - User B with 3 stars (60%):  appears 60 times in pool
+     * - Random pick: A has 100/160 = 62.5% chance, B has 60/160 = 37.5%
      */
     protected function assignWeighted(array $activeUsers, array $weights): ?int
     {
