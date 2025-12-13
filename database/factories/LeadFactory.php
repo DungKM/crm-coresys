@@ -36,7 +36,7 @@ class LeadFactory extends Factory
             'status' => 1,
             'lost_reason' => null,
             'closed_at' => null,
-            'user_id' => $userId,
+            'user_id' => null, // Để null để phân bổ thủ công qua Lead Assignment
             'person_id' => $personId,
             'lead_source_id' => $sourceId,
             'lead_type_id' => $typeId,

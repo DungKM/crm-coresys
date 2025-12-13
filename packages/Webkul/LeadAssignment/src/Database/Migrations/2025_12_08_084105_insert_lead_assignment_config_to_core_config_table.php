@@ -14,7 +14,7 @@ return new class extends Migration {
         // Insert các cấu hình mặc định cho Lead Assignment vào core_config
         DB::table('core_config')->updateOrInsert(
             ['code' => 'lead_assignment.enabled'],
-            ['value' => '1', 'created_at' => now(), 'updated_at' => now()]
+            ['value' => '0', 'created_at' => now(), 'updated_at' => now()]
         );
         DB::table('core_config')->updateOrInsert(
             ['code' => 'lead_assignment.method'],

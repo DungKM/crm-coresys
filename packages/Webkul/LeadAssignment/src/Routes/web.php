@@ -9,4 +9,5 @@ Route::group([
 ], function () {
     Route::get('/', [LeadAssignmentController::class, 'index'])->name('admin.settings.lead_assignment.index');
     Route::post('/', [LeadAssignmentController::class, 'store'])->name('admin.settings.lead_assignment.store');
+    Route::post('/assign-leads', [LeadAssignmentController::class, 'assignLeads'])->name('admin.settings.lead_assignment.assign_leads');
 });

@@ -4,7 +4,7 @@
 import.meta.glob(["../images/**", "../fonts/**"]);
 
 /**
- * Import component
+ * Import component from .js file
  */
 import LeadAssignmentSettings from "./components/LeadAssignmentSettings.js";
 

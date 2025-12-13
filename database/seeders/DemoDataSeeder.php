@@ -9,6 +9,14 @@ class DemoDataSeeder extends Seeder
 {
     public function run()
     {
+        // Cho phép tuỳ biến số lượng bằng ENV, có giá trị mặc định hợp lý
+        $salesCount = (int) env('DEMO_SALES_USERS', 12);
+        $orgCount = (int) env('DEMO_ORGS', 40);
+        $personCount = (int) env('DEMO_PERSONS', 150);
+        $productCount = (int) env('DEMO_PRODUCTS', 40);
+        $quoteCount = (int) env('DEMO_QUOTES', 25);
+        $leadCount = (int) env('DEMO_LEADS', 200);
+
         // Tạo role Sales nếu chưa có
         $role = \Webkul\User\Models\Role::firstOrCreate([
             'name' => 'Sales'
@@ -19,14 +27,14 @@ class DemoDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Tạo 3 user role Sales
-        \Webkul\User\Models\User::factory()->count(3)->create(['role_id' => $role->id]);
+        // Tạo user role Sales (mặc định 12, có thể chỉnh qua ENV)
+        \Webkul\User\Models\User::factory()->count($salesCount)->create(['role_id' => $role->id]);
 
-        // Tạo 10 organization
-        \Webkul\Contact\Models\Organization::factory()->count(10)->create();
+        // Tạo organization (mặc định 40)
+        \Webkul\Contact\Models\Organization::factory()->count($orgCount)->create();
 
-        // Tạo 20 person với dữ liệu đúng định dạng (insert trực tiếp để bypass CustomAttribute trait)
-        for ($i = 0; $i < 20; $i++) {
+        // Tạo person với dữ liệu đúng định dạng (insert trực tiếp để bypass CustomAttribute trait)
+        for ($i = 0; $i < $personCount; $i++) {
             DB::table('persons')->insert([
                 'name' => fake()->name(),
                 'emails' => json_encode([
@@ -44,13 +52,13 @@ class DemoDataSeeder extends Seeder
             ]);
         }
 
-        // Tạo 20 product
-        \Webkul\Product\Models\Product::factory()->count(20)->create();
+        // Tạo product (mặc định 40)
+        \Webkul\Product\Models\Product::factory()->count($productCount)->create();
 
-        // Tạo 10 quote
-        \Webkul\Quote\Models\Quote::factory()->count(10)->create();
+        // Tạo quote (mặc định 25)
+        \Webkul\Quote\Models\Quote::factory()->count($quoteCount)->create();
 
-        // Tạo 20 lead
-        \Webkul\Lead\Models\Lead::factory()->count(20)->create();
+        // Tạo lead (mặc định 200) với user_id = null để thử Lead Assignment
+        \Webkul\Lead\Models\Lead::factory()->count($leadCount)->create();
     }
 }
