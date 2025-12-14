@@ -17,15 +17,21 @@ class DemoDataSeeder extends Seeder
         $quoteCount = (int) env('DEMO_QUOTES', 25);
         $leadCount = (int) env('DEMO_LEADS', 200);
 
-        // Tạo role Sales nếu chưa có
+        // Tạo role Sales nếu chưa có với quyền đầy đủ
         $role = \Webkul\User\Models\Role::firstOrCreate([
             'name' => 'Sales'
         ], [
             'description' => 'Sales User',
-            'permission_type' => 'custom',
+            'permission_type' => 'all', // Đặt thành 'all' để có toàn bộ quyền
+            'permissions' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        // Nếu chưa được tạo trong lần trước, cập nhật permission_type
+        if ($role->wasRecentlyCreated === false && $role->permission_type !== 'all') {
+            $role->update(['permission_type' => 'all', 'permissions' => null]);
+        }
 
         // Tạo user role Sales (mặc định 12, có thể chỉnh qua ENV)
         \Webkul\User\Models\User::factory()->count($salesCount)->create(['role_id' => $role->id]);

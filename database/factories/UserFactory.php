@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('user123'),
             'status' => 1,
-            'view_permission' => 'global',
+            'view_permission' => 'individual', // Chỉ xem lead được giao
             'role_id' => 1, // Khi seed sẽ gán đúng role Sales
             'remember_token' => Str::random(10),
             'created_at' => now(),
