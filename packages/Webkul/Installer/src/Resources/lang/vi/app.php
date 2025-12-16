@@ -1,6 +1,7 @@
 <?php
 
 return [
+<<<<<<< HEAD
     'seeders' => [
         'attributes' => [
             'leads' => [
@@ -286,4 +287,297 @@ return [
             'webkul'                   => 'Webkul',
         ],
     ],
+=======
+  'seeders' => 
+  [
+    'attributes' => 
+    [
+      'leads' => 
+      [
+        'description' => 'Sự miêu tả',
+        'expected-close-date' => 'Ngày đóng dự kiến',
+        'lead-value' => 'Giá trị chì',
+        'sales-owner' => 'chủ bán hàng',
+        'source' => 'Nguồn',
+        'title' => 'Tiêu đề',
+        'type' => 'Kiểu',
+        'pipeline' => 'Đường ống',
+        'stage' => 'Sân khấu',
+      ],
+      'persons' => 
+      [
+        'contact-numbers' => 'Số liên lạc',
+        'emails' => 'Email',
+        'job-title' => 'Chức danh',
+        'name' => 'Tên',
+        'organization' => 'Tổ chức',
+        'sales-owner' => 'chủ bán hàng',
+      ],
+      'organizations' => 
+      [
+        'address' => 'Địa chỉ',
+        'name' => 'Tên',
+        'sales-owner' => 'chủ bán hàng',
+      ],
+      'products' => 
+      [
+        'description' => 'Sự miêu tả',
+        'name' => 'Tên',
+        'price' => 'Giá',
+        'quantity' => 'Số lượng',
+        'sku' => 'Mã hàng',
+      ],
+      'quotes' => 
+      [
+        'adjustment-amount' => 'Số tiền điều chỉnh',
+        'billing-address' => 'Địa chỉ thanh toán',
+        'description' => 'Sự miêu tả',
+        'discount-amount' => 'Số tiền chiết khấu',
+        'discount-percent' => 'Phần trăm chiết khấu',
+        'expired-at' => 'Hết hạn vào lúc',
+        'grand-total' => 'Tổng cộng',
+        'person' => 'Người',
+        'sales-owner' => 'chủ bán hàng',
+        'shipping-address' => 'Địa chỉ giao hàng',
+        'sub-total' => 'Tổng phụ',
+        'subject' => 'Chủ thể',
+        'tax-amount' => 'Số tiền thuế',
+      ],
+      'warehouses' => 
+      [
+        'contact-address' => 'Địa chỉ liên hệ',
+        'contact-emails' => 'Email liên hệ',
+        'contact-name' => 'Tên liên hệ',
+        'contact-numbers' => 'Số liên lạc',
+        'description' => 'Sự miêu tả',
+        'name' => 'Tên',
+      ],
+    ],
+    'email' => 
+    [
+      'activity-created' => 'Đã tạo hoạt động',
+      'activity-modified' => 'Hoạt động đã được sửa đổi',
+      'date' => 'Ngày',
+      'new-activity' => 'Bạn có một hoạt động mới, vui lòng tìm thông tin chi tiết bên dưới',
+      'new-activity-modified' => 'Bạn có một hoạt động mới được sửa đổi, vui lòng tìm thông tin chi tiết bên dưới',
+      'participants' => 'Người tham gia',
+      'title' => 'Tiêu đề',
+      'type' => 'Kiểu',
+    ],
+    'lead' => 
+    [
+      'pipeline' => 
+      [
+        'default' => 'Đường ống mặc định',
+        'pipeline-stages' => 
+        [
+          'follow-up' => 'Theo dõi',
+          'lost' => 'Mất',
+          'negotiation' => 'đàm phán',
+          'new' => 'Mới',
+          'prospect' => 'triển vọng',
+          'won' => 'Thắng',
+        ],
+      ],
+      'source' => 
+      [
+        'direct' => 'Trực tiếp',
+        'email' => 'E-mail',
+        'phone' => 'Điện thoại',
+        'web' => 'Web',
+        'web-form' => 'Biểu mẫu web',
+      ],
+      'type' => 
+      [
+        'existing-business' => 'Doanh nghiệp hiện tại',
+        'new-business' => 'Kinh doanh mới',
+      ],
+    ],
+    'user' => 
+    [
+      'role' => 
+      [
+        'administrator-role' => 'Vai trò quản trị viên',
+        'administrator' => 'Quản trị viên',
+      ],
+    ],
+    'workflow' => 
+    [
+      'email-to-participants-after-activity-updation' => 'Email cho người tham gia sau khi cập nhật hoạt động',
+      'email-to-participants-after-activity-creation' => 'Email cho người tham gia sau khi tạo hoạt động',
+    ],
+  ],
+  'installer' => 
+  [
+    'index' => 
+    [
+      'create-administrator' => 
+      [
+        'admin' => 'Quản trị viên',
+        'krayin' => 'Krayin',
+        'confirm-password' => 'Xác nhận mật khẩu',
+        'email' => 'E-mail',
+        'email-address' => 'quản trị viên@example.com',
+        'password' => 'Mật khẩu',
+        'title' => 'Tạo quản trị viên',
+      ],
+      'environment-configuration' => 
+      [
+        'algerian-dinar' => 'Dinar Algeria (DZD)',
+        'allowed-currencies' => 'Tiền tệ được phép',
+        'allowed-locales' => 'Ngôn ngữ được phép',
+        'application-name' => 'Tên ứng dụng',
+        'argentine-peso' => 'Peso Argentina (ARS)',
+        'australian-dollar' => 'Đô la Úc (AUD)',
+        'krayin' => 'Krayin',
+        'bangladeshi-taka' => 'Taka Bangladesh (BDT)',
+        'brazilian-real' => 'Real Brazil (BRL)',
+        'british-pound-sterling' => 'Đồng bảng Anh (GBP)',
+        'canadian-dollar' => 'Đô la Canada (CAD)',
+        'cfa-franc-bceao' => 'Franc CFA BCEAO (XOF)',
+        'cfa-franc-beac' => 'CFA Franc BEAC (XAF)',
+        'chilean-peso' => 'Peso Chilê (CLP)',
+        'chinese-yuan' => 'Nhân dân tệ Trung Quốc (CNY)',
+        'colombian-peso' => 'Đồng Peso Colombia (COP)',
+        'czech-koruna' => 'Koruna Séc (CZK)',
+        'danish-krone' => 'Krone Đan Mạch (DKK)',
+        'database-connection' => 'Kết nối cơ sở dữ liệu',
+        'database-hostname' => 'Tên máy chủ cơ sở dữ liệu',
+        'database-name' => 'Tên cơ sở dữ liệu',
+        'database-password' => 'Mật khẩu cơ sở dữ liệu',
+        'database-port' => 'Cổng cơ sở dữ liệu',
+        'database-prefix' => 'Tiền tố cơ sở dữ liệu',
+        'database-username' => 'Tên người dùng cơ sở dữ liệu',
+        'default-currency' => 'Tiền tệ mặc định',
+        'default-locale' => 'Ngôn ngữ mặc định',
+        'default-timezone' => 'Múi giờ mặc định',
+        'default-url' => 'URL mặc định',
+        'default-url-link' => 'https://localhost',
+        'egyptian-pound' => 'Bảng Ai Cập (EGP)',
+        'euro' => 'Euro (EUR)',
+        'fijian-dollar' => 'Đô la Fiji (FJD)',
+        'hong-kong-dollar' => 'Đô la Hồng Kông (HKD)',
+        'hungarian-forint' => 'Forint Hungary (HUF)',
+        'indian-rupee' => 'Rupee Ấn Độ (INR)',
+        'indonesian-rupiah' => 'Rupiah Indonesia (IDR)',
+        'israeli-new-shekel' => 'Shekel Israel mới (ILS)',
+        'japanese-yen' => 'Yên Nhật (JPY)',
+        'jordanian-dinar' => 'Dinar Jordan (JOD)',
+        'kazakhstani-tenge' => 'Tenge Kazakhstan (KZT)',
+        'kuwaiti-dinar' => 'Dinar Kuwait (KWD)',
+        'lebanese-pound' => 'Bảng Lebanon (LBP)',
+        'libyan-dinar' => 'Dinar Libya (LYD)',
+        'malaysian-ringgit' => 'Ringgit Malaysia (MYR)',
+        'mauritian-rupee' => 'Rupee Mauritius (MUR)',
+        'mexican-peso' => 'Peso Mexico (MXN)',
+        'moroccan-dirham' => 'Dirham Ma-rốc (MAD)',
+        'mysql' => 'Mysql',
+        'nepalese-rupee' => 'Rupee Nepal (NPR)',
+        'new-taiwan-dollar' => 'Đô la Đài Loan mới (TWD)',
+        'new-zealand-dollar' => 'Đô la New Zealand (NZD)',
+        'nigerian-naira' => 'Naira Nigeria (NGN)',
+        'norwegian-krone' => 'Krone Na Uy (NOK)',
+        'omani-rial' => 'Rial Oman (OMR)',
+        'pakistani-rupee' => 'Rupee Pakistan (PKR)',
+        'panamanian-balboa' => 'Balboa Panama (PAB)',
+        'paraguayan-guarani' => 'Guarani Paraguay (PYG)',
+        'peruvian-nuevo-sol' => 'Nuevo Sol Peru (PEN)',
+        'pgsql' => 'pgSQL',
+        'philippine-peso' => 'Peso Philippine (PHP)',
+        'polish-zloty' => 'Zloty Ba Lan (PLN)',
+        'qatari-rial' => 'Rial Qatar (QAR)',
+        'romanian-leu' => 'Leu Romania (RON)',
+        'russian-ruble' => 'Đồng Rúp Nga (RUB)',
+        'saudi-riyal' => 'Riyal Ả Rập Xê Út (SAR)',
+        'select-timezone' => 'Chọn múi giờ',
+        'singapore-dollar' => 'Đô la Singapore (SGD)',
+        'south-african-rand' => 'Rand Nam Phi (ZAR)',
+        'south-korean-won' => 'Won Hàn Quốc (KRW)',
+        'sqlsrv' => 'SQLSRV',
+        'sri-lankan-rupee' => 'Rupee Sri Lanka (LKR)',
+        'swedish-krona' => 'Krona Thụy Điển (SEK)',
+        'swiss-franc' => 'Franc Thụy Sĩ (CHF)',
+        'thai-baht' => 'Baht Thái (THB)',
+        'title' => 'Cấu hình cửa hàng',
+        'tunisian-dinar' => 'Dinar Tunisia (TND)',
+        'turkish-lira' => 'Lira Thổ Nhĩ Kỳ (TRY)',
+        'ukrainian-hryvnia' => 'Hryvnia Ucraina (UAH)',
+        'united-arab-emirates-dirham' => 'Dirham của Các tiểu vương quốc Ả Rập thống nhất (AED)',
+        'united-states-dollar' => 'Đô la Mỹ (USD)',
+        'uzbekistani-som' => 'Som Uzbekistan (UZS)',
+        'venezuelan-bolívar' => 'Đồng Bolivar của Venezuela (VEF)',
+        'vietnamese-dong' => 'Đồng Việt Nam (đồng)',
+        'warning-message' => 'Hãy coi chừng! Cài đặt cho ngôn ngữ hệ thống mặc định và đơn vị tiền tệ mặc định của bạn là vĩnh viễn và không thể thay đổi sau khi đã đặt.',
+        'zambian-kwacha' => 'Đồng Kwacha của Zambia (ZMW)',
+      ],
+      'installation-processing' => 
+      [
+        'krayin' => 'Cài đặt Krayin',
+        'krayin-info' => 'Tạo các bảng cơ sở dữ liệu, quá trình này có thể mất vài phút',
+        'title' => 'Cài đặt',
+      ],
+      'installation-completed' => 
+      [
+        'admin-panel' => 'Bảng quản trị',
+        'krayin-forums' => 'Diễn đàn Krayin',
+        'customer-panel' => 'Bảng điều khiển khách hàng',
+        'explore-krayin-extensions' => 'Khám phá phần mở rộng Krayin',
+        'title' => 'Cài đặt hoàn tất',
+        'title-info' => 'Krayin đã được cài đặt thành công trên hệ thống của bạn.',
+      ],
+      'ready-for-installation' => 
+      [
+        'create-databsae-table' => 'Tạo bảng cơ sở dữ liệu',
+        'install' => 'Cài đặt',
+        'install-info' => 'Krayin để cài đặt',
+        'install-info-button' => 'Bấm vào nút bên dưới để',
+        'populate-database-table' => 'Điền vào các bảng cơ sở dữ liệu',
+        'start-installation' => 'Bắt đầu cài đặt',
+        'title' => 'Sẵn sàng để cài đặt',
+      ],
+      'start' => 
+      [
+        'locale' => 'Ngôn ngữ',
+        'main' => 'Bắt đầu',
+        'select-locale' => 'Chọn ngôn ngữ',
+        'title' => 'Cài đặt Krayin của bạn',
+        'welcome-title' => 'Chào mừng đến với Krayin',
+      ],
+      'server-requirements' => 
+      [
+        'calendar' => 'Lịch',
+        'ctype' => 'cLoại',
+        'curl' => 'cURL',
+        'dom' => 'nhà thờ',
+        'fileinfo' => 'thông tin tập tin',
+        'filter' => 'Lọc',
+        'gd' => 'GD',
+        'hash' => 'Băm',
+        'intl' => 'quốc tế',
+        'json' => 'JSON',
+        'mbstring' => 'chuỗi ký tự',
+        'openssl' => 'openssl',
+        'pcre' => 'pcre',
+        'pdo' => 'pdo',
+        'php' => 'PHP',
+        'php-version' => '8.1 trở lên',
+        'session' => 'phiên họp',
+        'title' => 'Yêu cầu hệ thống',
+        'tokenizer' => 'mã thông báo',
+        'xml' => 'XML',
+      ],
+      'back' => 'Mặt sau',
+      'krayin' => 'Krayin',
+      'krayin-info' => 'một dự án cộng đồng của',
+      'krayin-logo' => 'Logo Krayin',
+      'continue' => 'Tiếp tục',
+      'installation-description' => 'Việc cài đặt Krayin thường bao gồm một số bước. Đây là tóm tắt chung về quá trình cài đặt cho Krayin',
+      'installation-info' => 'Chúng tôi rất vui được gặp bạn ở đây!',
+      'installation-title' => 'Chào mừng bạn đến với cài đặt',
+      'installation-wizard' => 'Ngôn ngữ hướng dẫn cài đặt',
+      'title' => 'Trình cài đặt Krayin',
+      'webkul' => 'Webkul',
+    ],
+  ],
+>>>>>>> upstream/main
 ];

@@ -95,6 +95,7 @@
                                             class="flex flex-col gap-1"
                                             v-if="activity.title"
                                         >
+<<<<<<< HEAD
                                             <p class="flex flex-wrap items-center gap-1 font-medium dark:text-white">
                                                 @{{ activity.title }}
 
@@ -103,12 +104,26 @@
                                                         <span>:</span>
 
                                                         <span class="break-words">
+=======
+                                            <p class="flex flex-wrap items-center gap-1 font-medium text-gray-800 dark:text-white">
+                                                @{{ activity.title }}
+
+                                                <template v-if="activity.type == 'system' && activity.additional">
+                                                    <p class="flex items-center gap-1 text-gray-800 dark:text-white">
+                                                        <span>:</span>
+
+                                                        <span class="break-words text-gray-700 dark:text-gray-200">
+>>>>>>> upstream/main
                                                             @{{ (activity.additional.old.label ? String(activity.additional.old.label).replaceAll('<br>', ' ') : "@lang('admin::app.components.activities.index.empty')") }}
                                                         </span>
 
                                                         <span class="icon-stats-up rotate-90 text-xl"></span>
 
+<<<<<<< HEAD
                                                         <span class="break-words">
+=======
+                                                        <span class="break-words text-gray-700 dark:text-gray-200">
+>>>>>>> upstream/main
                                                             @{{ (activity.additional.new.label ? String(activity.additional.new.label).replaceAll('<br>', ' ') : "@lang('admin::app.components.activities.index.empty')") }}
                                                         </span>
                                                     </p>
@@ -116,13 +131,21 @@
                                             </p>
 
                                             <template v-if="activity.type == 'email'">
+<<<<<<< HEAD
                                                 <p class="dark:text-white">
+=======
+                                                <p class="text-gray-800 dark:text-white">
+>>>>>>> upstream/main
                                                     @lang('admin::app.components.activities.index.from'):
 
                                                     @{{ activity.additional.from }}
                                                 </p>
 
+<<<<<<< HEAD
                                                 <p class="dark:text-white">
+=======
+                                                <p class="text-gray-800 dark:text-white">
+>>>>>>> upstream/main
                                                     @lang('admin::app.components.activities.index.to'):
 
                                                     @{{ activity.additional.to.join(', ') }}
@@ -130,7 +153,11 @@
 
                                                 <p
                                                     v-if="activity.additional.cc"
+<<<<<<< HEAD
                                                     class="dark:text-white"
+=======
+                                                    class="text-gray-800 dark:text-white"
+>>>>>>> upstream/main
                                                 >
                                                     @lang('admin::app.components.activities.index.cc'):
 
@@ -139,7 +166,11 @@
 
                                                 <p
                                                     v-if="activity.additional.bcc"
+<<<<<<< HEAD
                                                     class="dark:text-white"
+=======
+                                                    class="text-gray-800 dark:text-white"
+>>>>>>> upstream/main
                                                 >
                                                     @lang('admin::app.components.activities.index.bcc'):
 
@@ -151,7 +182,11 @@
                                                 <!-- Activity Schedule -->
                                                 <p
                                                     v-if="activity.schedule_from && activity.schedule_from"
+<<<<<<< HEAD
                                                     class="dark:text-white"
+=======
+                                                    class="text-gray-800 dark:text-white"
+>>>>>>> upstream/main
                                                 >
                                                     @lang('admin::app.components.activities.index.scheduled-on'):
 
@@ -161,7 +196,11 @@
                                                 <!-- Activity Participants -->
                                                 <p
                                                     v-if="activity.participants?.length"
+<<<<<<< HEAD
                                                     class="dark:text-white"
+=======
+                                                    class="text-gray-800 dark:text-white"
+>>>>>>> upstream/main
                                                 >
                                                     @lang('admin::app.components.activities.index.participants'):
 
@@ -173,7 +212,11 @@
                                                 <!-- Activity Location -->
                                                 <p
                                                     v-if="activity.location"
+<<<<<<< HEAD
                                                     class="dark:text-white"
+=======
+                                                    class="text-gray-800 dark:text-white"
+>>>>>>> upstream/main
                                                 >
                                                     @lang('admin::app.components.activities.index.location'):
 
@@ -188,7 +231,11 @@
 
                                         <!-- Activity Description -->
                                         <p
+<<<<<<< HEAD
                                             class="dark:text-white"
+=======
+                                            class="text-gray-800 dark:text-white"
+>>>>>>> upstream/main
                                             v-if="activity.comment"
                                             v-safe-html="activity.comment"
                                         ></p>

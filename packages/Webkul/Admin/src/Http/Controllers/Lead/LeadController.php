@@ -29,6 +29,12 @@ use Webkul\Lead\Repositories\TypeRepository;
 use Webkul\Lead\Services\MagicAIService;
 use Webkul\Tag\Repositories\TagRepository;
 use Webkul\User\Repositories\UserRepository;
+<<<<<<< HEAD
+=======
+use App\Services\WhatsAppService;
+use Illuminate\Support\Str;       // Thư viện xử lý chuỗi
+use Illuminate\Support\Facades\Log; // Thư viện ghi log lỗi
+>>>>>>> upstream/main
 
 class LeadController extends Controller
 {
@@ -153,6 +159,63 @@ class LeadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+<<<<<<< HEAD
+=======
+    // public function store(LeadForm $request): RedirectResponse|JsonResponse
+    // {
+    //     Event::dispatch('lead.create.before');
+
+    //     $data = request()->all();
+
+    //     $data['status'] = 1;
+
+    //     if (! empty($data['lead_pipeline_stage_id'])) {
+    //         $stage = $this->stageRepository->findOrFail($data['lead_pipeline_stage_id']);
+
+    //         $data['lead_pipeline_id'] = $stage->lead_pipeline_id;
+    //     } else {
+    //         if (empty($data['lead_pipeline_id'])) {
+    //             $pipeline = $this->pipelineRepository->getDefaultPipeline();
+
+    //             $data['lead_pipeline_id'] = $pipeline->id;
+    //         } else {
+    //             $pipeline = $this->pipelineRepository->findOrFail($data['lead_pipeline_id']);
+    //         }
+
+    //         $stage = $pipeline->stages()->first();
+
+    //         $data['lead_pipeline_stage_id'] = $stage->id;
+    //     }
+
+    //     if (in_array($stage->code, ['won', 'lost'])) {
+    //         $data['closed_at'] = Carbon::now();
+    //     }
+
+    //     $lead = $this->leadRepository->create($data);
+
+    //     if (request()->ajax()) {
+    //         return response()->json([
+    //             'message' => trans('admin::app.leads.create-success'),
+    //             'data'    => new LeadResource($lead),
+    //         ]);
+    //     }
+
+    //     Event::dispatch('lead.create.after', $lead);
+
+    //     session()->flash('success', trans('admin::app.leads.create-success'));
+
+    //     if (! empty($data['lead_pipeline_id'])) {
+    //         $params['pipeline_id'] = $data['lead_pipeline_id'];
+    //     }
+
+    //     return redirect()->route('admin.leads.index', $params ?? []);
+    // }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+
+>>>>>>> upstream/main
     public function store(LeadForm $request): RedirectResponse|JsonResponse
     {
         Event::dispatch('lead.create.before');
@@ -161,21 +224,34 @@ class LeadController extends Controller
 
         $data['status'] = 1;
 
+<<<<<<< HEAD
         if (! empty($data['lead_pipeline_stage_id'])) {
             $stage = $this->stageRepository->findOrFail($data['lead_pipeline_stage_id']);
 
+=======
+        // --- Xử lý Pipeline và Stage (Giữ nguyên code gốc) ---
+        if (! empty($data['lead_pipeline_stage_id'])) {
+            $stage = $this->stageRepository->findOrFail($data['lead_pipeline_stage_id']);
+>>>>>>> upstream/main
             $data['lead_pipeline_id'] = $stage->lead_pipeline_id;
         } else {
             if (empty($data['lead_pipeline_id'])) {
                 $pipeline = $this->pipelineRepository->getDefaultPipeline();
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/main
                 $data['lead_pipeline_id'] = $pipeline->id;
             } else {
                 $pipeline = $this->pipelineRepository->findOrFail($data['lead_pipeline_id']);
             }
+<<<<<<< HEAD
 
             $stage = $pipeline->stages()->first();
 
+=======
+            $stage = $pipeline->stages()->first();
+>>>>>>> upstream/main
             $data['lead_pipeline_stage_id'] = $stage->id;
         }
 
@@ -183,8 +259,20 @@ class LeadController extends Controller
             $data['closed_at'] = Carbon::now();
         }
 
+<<<<<<< HEAD
         $lead = $this->leadRepository->create($data);
 
+=======
+        // --- LƯU LEAD VÀO DB ---
+        $lead = $this->leadRepository->create($data);
+
+        // --- PHÁT EVENT ĐỂ TRIGGER LISTENER (MỘT CÁCH TỰ ĐỘNG) ---
+        // Listener SendWhatsAppWelcome sẽ lắng nghe event này
+        Log::info("LeadController: About to dispatch 'lead.create.after' for Lead ID {$lead->id}");
+        Event::dispatch('lead.create.after', $lead);
+        Log::info("LeadController: Dispatched 'lead.create.after' for Lead ID {$lead->id}");
+
+>>>>>>> upstream/main
         if (request()->ajax()) {
             return response()->json([
                 'message' => trans('admin::app.leads.create-success'),
@@ -192,8 +280,11 @@ class LeadController extends Controller
             ]);
         }
 
+<<<<<<< HEAD
         Event::dispatch('lead.create.after', $lead);
 
+=======
+>>>>>>> upstream/main
         session()->flash('success', trans('admin::app.leads.create-success'));
 
         if (! empty($data['lead_pipeline_id'])) {
@@ -218,7 +309,11 @@ class LeadController extends Controller
      */
     public function view(int $id)
     {
+<<<<<<< HEAD
         $lead = $this->leadRepository->findOrFail($id);
+=======
+        $lead = $this->leadRepository->with(['activities.user'])->findOrFail($id);
+>>>>>>> upstream/main
 
         $userIds = bouncer()->getAuthorizedUserIds();
 
@@ -233,6 +328,28 @@ class LeadController extends Controller
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Display a resource.
+     */
+    public function chat(int $id)
+    {
+        $lead = $this->leadRepository->with(['activities.user'])->findOrFail($id);
+
+        $userIds = bouncer()->getAuthorizedUserIds();
+
+        if (
+            $userIds
+            && ! in_array($lead->user_id, $userIds)
+        ) {
+            return redirect()->route('admin.leads.index');
+        }
+
+        return view('admin::leads.chat', compact('lead'));
+    }
+
+    /**
+>>>>>>> upstream/main
      * Update the specified resource in storage.
      */
     public function update(LeadForm $request, int $id): RedirectResponse|JsonResponse
@@ -697,18 +814,33 @@ class LeadController extends Controller
      * Create multiple leads.
      */
     private function createLeads($rawLeads): array
+<<<<<<< HEAD
     {
         $leads = [];
 
         foreach ($rawLeads as $rawLead) {
             Event::dispatch('lead.create.before');
 
+=======
+{
+    $leads = [];
+
+    foreach ($rawLeads as $rawLead) {
+        Event::dispatch('lead.create.before');
+
+        // --- SỬA LẠI PHẦN KIỂM TRA TRÙNG LẶP ---
+        $existingPerson = null;
+        
+        // Kiểm tra theo email trước
+        if (isset($rawLead['person']['emails'])) {
+>>>>>>> upstream/main
             foreach ($rawLead['person']['emails'] as $email) {
                 $person = $this->personRepository
                     ->whereJsonContains('emails', [['value' => $email['value']]])
                     ->first();
 
                 if ($person) {
+<<<<<<< HEAD
                     $rawLead['person']['id'] = $person->id;
 
                     break;
@@ -732,3 +864,144 @@ class LeadController extends Controller
         return $leads;
     }
 }
+=======
+                    $existingPerson = $person;
+                    break;
+                }
+            }
+        }
+
+        // Nếu không tìm thấy theo email, kiểm tra theo số điện thoại
+        if (!$existingPerson && isset($rawLead['person']['contact_numbers'])) {
+            foreach ($rawLead['person']['contact_numbers'] as $phone) {
+                $person = $this->personRepository
+                    ->where('id', function ($query) use ($phone) {
+                        $query->select('person_id')
+                            ->from('contact_numbers')
+                            ->where('value', $phone['value']);
+                    })
+                    ->first();
+
+                if ($person) {
+                    $existingPerson = $person;
+                    break;
+                }
+            }
+        }
+
+        // Nếu đã có person tồn tại, gán ID
+        if ($existingPerson) {
+            $rawLead['person']['id'] = $existingPerson->id;
+        }
+
+        $pipeline = $this->pipelineRepository->getDefaultPipeline();
+        $stage = $pipeline->stages()->first();
+
+        $lead = $this->leadRepository->create(array_merge($rawLead, [
+            'lead_pipeline_id'       => $pipeline->id,
+            'lead_pipeline_stage_id' => $stage->id,
+        ]));
+
+        Event::dispatch('lead.create.after', $lead);
+
+        $leads[] = $lead;
+    }
+
+    return $leads;
+}
+
+/**
+ * Send WhatsApp message to a lead
+ */
+public function sendWhatsAppMessage($id)
+{
+    try {
+        $lead = $this->leadRepository->find($id);
+
+        if (!$lead) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.leads.view.lead-not-found'),
+            ], 404);
+        }
+
+        // Validate input
+        $validator = Validator::make(request()->all(), [
+            'message' => 'required|string|min:1|max:4096',
+            'contact_number' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        $message = request('message');
+        $rawPhoneNumber = request('contact_number');
+
+        // ---- START: NORMALIZE PHONE NUMBER ----
+        // Remove all non-numeric characters
+        $phoneNumber = preg_replace('/[^0-9]/', '', $rawPhoneNumber);
+
+        // If the number starts with 0, replace it with the country code (e.g., 84 for Vietnam)
+        if (substr($phoneNumber, 0, 1) == '0') {
+            $phoneNumber = '84' . substr($phoneNumber, 1);
+        }
+        Log::info('[WhatsApp Controller] Raw Phone: ' . $rawPhoneNumber . ' | Normalized Phone: ' . $phoneNumber);
+        // ---- END: NORMALIZE PHONE NUMBER ----
+
+        // Initialize WhatsApp Service
+        $whatsAppService = new WhatsAppService();
+
+        // Send message (now returns array with error details)
+        $result = $whatsAppService->sendTextMessage($phoneNumber, $message);
+
+        if ($result['success'] === true) {
+            // Log activity
+            if (class_exists('\Webkul\Activity\Repositories\ActivityRepository')) {
+                $activityRepository = app(\Webkul\Activity\Repositories\ActivityRepository::class);
+                
+                try {
+                    $activityRepository->create([
+                        'title' => 'Gửi WhatsApp (Thủ công)',
+                        'comment' => $message,
+                        'type' => 'whatsapp',
+                        'lead_id' => $lead->id,
+                        'user_id' => auth()->user()->id ?? null,
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('[WhatsApp] Error creating activity: ' . $e->getMessage());
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $result['message'] ?? trans('admin::app.leads.send-whatsapp-message.success'),
+            ]);
+        } else {
+            // Show actual error from WhatsApp API
+            $errorMessage = $result['message'] ?? trans('admin::app.leads.send-whatsapp-message.error');
+            
+            // Add error code if available
+            if (!empty($result['error_code'])) {
+                $errorMessage .= " (Error: {$result['error_code']})";
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $errorMessage,
+            ], 400);
+        }
+    } catch (\Exception $e) {
+        Log::error('[WhatsApp Controller] Error: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Lỗi: ' . $e->getMessage(),
+        ], 500);
+    }
+}
+}
+>>>>>>> upstream/main

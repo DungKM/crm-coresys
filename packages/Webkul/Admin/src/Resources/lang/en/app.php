@@ -1,6 +1,7 @@
 <?php
 
 return [
+<<<<<<< HEAD
     'acl' => [
         'leads'           => 'Leads',
         'lead'            => 'Lead',
@@ -2438,3 +2439,11 @@ return [
         'xlsx'       => 'XLSX',
     ],
 ];
+=======
+    'leads' => [
+        'chat' => [
+            'title' => 'Chat',
+        ],
+    ],
+];
+>>>>>>> upstream/main

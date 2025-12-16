@@ -32,6 +32,15 @@ Breadcrumbs::for('leads.view', function (BreadcrumbTrail $trail, $lead) {
     $trail->push('#'.$lead->id, route('admin.leads.view', $lead->id));
 });
 
+<<<<<<< HEAD
+=======
+// Dashboard > Leads > Title > Chat
+Breadcrumbs::for('admin.leads.chat.index', function (BreadcrumbTrail $trail, $lead) {
+    $trail->parent('leads.view', $lead);
+    $trail->push('Chat', route('admin.leads.chat.index', $lead->id));
+});
+
+>>>>>>> upstream/main
 // Dashboard > Quotes
 Breadcrumbs::for('quotes', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

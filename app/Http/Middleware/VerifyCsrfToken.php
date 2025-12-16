@@ -14,5 +14,9 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'admin/mail/inbound-parse',
         'admin/web-forms/forms/*',
+<<<<<<< HEAD
+=======
+        '/webhook/whatsapp',
+>>>>>>> upstream/main
     ];
 }

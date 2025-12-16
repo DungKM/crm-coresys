@@ -8,6 +8,7 @@
         <div class="flex flex-col items-center gap-5">
             <!-- Logo -->
             @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
+<<<<<<< HEAD
                 <img
                     class="h-10 w-[110px]"
                     src="{{ Storage::url($logo) }}"
@@ -19,6 +20,11 @@
                     src="{{ vite()->asset('images/logo.svg') }}"
                     alt="{{ config('app.name') }}"
                 />
+=======
+                <img class="h-10 w-[110px]" src="{{ Storage::url($logo) }}" alt="{{ config('app.name') }}" />
+            @else
+                <img class="w-max" src="{{ vite()->asset('images/logo.svg') }}" alt="{{ config('app.name') }}" />
+>>>>>>> upstream/main
             @endif
 
             <div class="box-shadow flex min-w-[300px] flex-col rounded-md bg-white dark:bg-gray-900">
@@ -37,6 +43,7 @@
                                 @lang('admin::app.users.login.email')
                             </x-admin::form.control-group.label>
 
+<<<<<<< HEAD
                             <x-admin::form.control-group.control
                                 type="email"
                                 class="w-[254px] max-w-full"
@@ -46,6 +53,11 @@
                                 :label="trans('admin::app.users.login.email')"
                                 :placeholder="trans('admin::app.users.login.email')"
                             />
+=======
+                            <x-admin::form.control-group.control type="email" class="w-[254px] max-w-full"
+                                id="email" name="email" rules="required|email" :label="trans('admin::app.users.login.email')"
+                                :placeholder="trans('admin::app.users.login.email')" />
+>>>>>>> upstream/main
 
                             <x-admin::form.control-group.error control-name="email" />
                         </x-admin::form.control-group>
@@ -56,6 +68,7 @@
                                 @lang('admin::app.users.login.password')
                             </x-admin::form.control-group.label>
 
+<<<<<<< HEAD
                             <x-admin::form.control-group.control
                                 type="password"
                                 class="w-[254px] max-w-full ltr:pr-10 rtl:pl-10"
@@ -73,6 +86,15 @@
                                 role="presentation"
                                 tabindex="0"
                             >
+=======
+                            <x-admin::form.control-group.control type="password"
+                                class="w-[254px] max-w-full ltr:pr-10 rtl:pl-10" id="password" name="password"
+                                rules="required|min:6" :label="trans('admin::app.users.login.password')" :placeholder="trans('admin::app.users.login.password')" />
+
+                            <span
+                                class="icon-eye-hide absolute top-11 -translate-y-2/4 cursor-pointer text-2xl ltr:right-3 rtl:left-3"
+                                onclick="switchVisibility()" id="visibilityIcon" role="presentation" tabindex="0">
+>>>>>>> upstream/main
                             </span>
 
                             <x-admin::form.control-group.error control-name="password" />
@@ -81,18 +103,27 @@
 
                     <div class="flex items-center justify-between p-4">
                         <!-- Forgot Password Link -->
+<<<<<<< HEAD
                         <a
                             class="cursor-pointer text-xs font-semibold leading-6 text-brandColor"
                             href="{{ route('admin.forgot_password.create') }}"
                         >
+=======
+                        <a class="cursor-pointer text-xs font-semibold leading-6 text-brandColor"
+                            href="{{ route('admin.forgot_password.create') }}">
+>>>>>>> upstream/main
                             @lang('admin::app.users.login.forget-password-link')
                         </a>
 
                         <!-- Submit Button -->
+<<<<<<< HEAD
                         <button
                             class="primary-button"
                             aria-label="{{ trans('admin::app.users.login.submit-btn')}}"
                         >
+=======
+                        <button class="primary-button" aria-label="{{ trans('admin::app.users.login.submit-btn') }}">
+>>>>>>> upstream/main
                             @lang('admin::app.users.login.submit-btn')
                         </button>
                     </div>
@@ -107,14 +138,22 @@
             @lang('admin::app.components.layouts.powered-by.description', [
                 'krayin' => '<a class="text-brandColor hover:underline " href="https://krayincrm.com/">Krayin</a>',
                 'webkul' => '<a class="text-brandColor hover:underline " href="https://webkul.com/">Webkul</a>',
+<<<<<<< HEAD
             ]) 
+=======
+            ])
+>>>>>>> upstream/main
         </div>
     </div>
 
     @push('scripts')
         <script>
             function switchVisibility() {
+<<<<<<< HEAD
                 let passwordField = document.getElementById("password");
+=======
+                +
+>>>>>>> upstream/main
                 let visibilityIcon = document.getElementById("visibilityIcon");
 
                 passwordField.type = passwordField.type === "password" ? "text" : "password";

@@ -8,7 +8,11 @@
   "devDependencies": {
     "axios": "^1.6.4",
     "laravel-vite-plugin": "^1.0.0",
+<<<<<<< HEAD
     "vite": "^5.0.0",
     "lefthook": "^1.5.2"
+=======
+    "vite": "^5.0.0"
+>>>>>>> upstream/main
   }
 }

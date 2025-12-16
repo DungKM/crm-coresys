@@ -34,6 +34,11 @@ class Activity extends Model implements ActivityContract
     protected $casts = [
         'schedule_from' => 'datetime',
         'schedule_to'   => 'datetime',
+<<<<<<< HEAD
+=======
+        'is_pinned'     => 'boolean',
+        'is_starred'    => 'boolean',
+>>>>>>> upstream/main
     ];
 
     /**
@@ -50,6 +55,11 @@ class Activity extends Model implements ActivityContract
         'schedule_from',
         'schedule_to',
         'is_done',
+<<<<<<< HEAD
+=======
+        'is_pinned',
+        'is_starred',
+>>>>>>> upstream/main
         'user_id',
     ];
 
