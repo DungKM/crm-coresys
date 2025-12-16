@@ -1,0 +1,5 @@
+commit-msg:
+  scripts:
+    verify-commit-msg:
+      runner: bash
+      script: .lefthook/commit-msg/verify-commit-msg
