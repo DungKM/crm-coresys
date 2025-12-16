@@ -1,0 +1,20 @@
+{
+  "packages/Webkul/LeadAssignment/src/Resources/assets/js/app.js": {
+    "file": "assets/app-7UicnGib.js",
+    "name": "app",
+    "src": "packages/Webkul/LeadAssignment/src/Resources/assets/js/app.js",
+    "isEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-l0sNRNKZ.js",
+    "name": "app",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CAiCLEjY.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}

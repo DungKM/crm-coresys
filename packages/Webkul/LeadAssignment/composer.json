@@ -1,0 +1,27 @@
+{
+    "name": "leadassignment/leadassignment",
+    "description": "leadassignment",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Webkul",
+            "email": "example@webkul.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\LeadAssignment\\Webkul\LeadAssignment\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Webkul\LeadAssignment\\Providers\\Webkul\LeadAssignmentServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}
