@@ -49,3 +49,11 @@ require 'configuration-routes.php';
  * Rest routes.
  */
 require 'rest-routes.php';
+<<<<<<< HEAD
+=======
+
+/**
+ * WhatsApp routes.
+ */
+require 'whatsapp-routes.php';
+>>>>>>> upstream/main

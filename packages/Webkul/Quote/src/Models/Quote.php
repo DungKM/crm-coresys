@@ -8,11 +8,18 @@ use Webkul\Contact\Models\PersonProxy;
 use Webkul\Lead\Models\LeadProxy;
 use Webkul\Quote\Contracts\Quote as QuoteContract;
 use Webkul\User\Models\UserProxy;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Quote extends Model implements QuoteContract
 {
     use  HasFactory, CustomAttribute;
+=======
+
+class Quote extends Model implements QuoteContract
+{
+    use CustomAttribute;
+>>>>>>> upstream/main
 
     protected $table = 'quotes';
 
@@ -43,10 +50,13 @@ class Quote extends Model implements QuoteContract
         'person_id',
     ];
 
+<<<<<<< HEAD
     protected static function newFactory()
     {
         return \Database\Factories\QuoteFactory::new();
     }
+=======
+>>>>>>> upstream/main
     /**
      * Get the quote items record associated with the quote.
      */

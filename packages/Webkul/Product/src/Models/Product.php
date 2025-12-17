@@ -12,11 +12,18 @@ use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Tag\Models\TagProxy;
 use Webkul\Warehouse\Models\LocationProxy;
 use Webkul\Warehouse\Models\WarehouseProxy;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model implements ProductContract
 {
     use HasFactory, CustomAttribute, LogsActivity;
+=======
+
+class Product extends Model implements ProductContract
+{
+    use CustomAttribute, LogsActivity;
+>>>>>>> upstream/main
 
     /**
      * The attributes that are mass assignable.
@@ -31,10 +38,13 @@ class Product extends Model implements ProductContract
         'price',
     ];
 
+<<<<<<< HEAD
     protected static function newFactory()
     {
         return \Database\Factories\ProductFactory::new();
     }
+=======
+>>>>>>> upstream/main
     /**
      * Get the product warehouses that owns the product.
      */

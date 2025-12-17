@@ -17,7 +17,14 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+<<<<<<< HEAD
         ],
+=======
+            
+        ],
+        'lead.create.after' => [
+            \App\Listeners\SendWhatsAppWelcome::class,],
+>>>>>>> upstream/main
     ];
 
     /**

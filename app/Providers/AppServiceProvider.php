@@ -23,6 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+<<<<<<< HEAD
         //
+=======
+        // Thêm đoạn này vào đầu hàm boot
+    \Illuminate\Support\Facades\App::setLocale('vi');
+    \Carbon\Carbon::setLocale('vi');
+>>>>>>> upstream/main
     }
 }

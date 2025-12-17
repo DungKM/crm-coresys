@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 
+<<<<<<< HEAD
 <html
     class="{{ request()->cookie('dark_mode') ? 'dark' : '' }}"
     lang="{{ app()->getLocale() }}"
     dir="{{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'rtl' : 'ltr' }}"
 >
+=======
+<html class="{{ request()->cookie('dark_mode') ? 'dark' : '' }}" lang="{{ app()->getLocale() }}"
+    dir="{{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'rtl' : 'ltr' }}">
+>>>>>>> upstream/main
 
 <head>
 
@@ -14,6 +19,7 @@
 
     <meta charset="UTF-8">
 
+<<<<<<< HEAD
     <meta
         http-equiv="X-UA-Compatible"
         content="IE=edge"
@@ -72,6 +78,34 @@
             rel="shortcut icon"
             sizes="16x16"
         />
+=======
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-language" content="{{ app()->getLocale() }}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="base-url" content="{{ url()->to('/') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="currency"
+        content="{{ json_encode([
+            'code' => config('app.currency'),
+            'symbol' => core()->currencySymbol(config('app.currency')),
+        ]) }}
+        ">
+
+    @stack('meta')
+
+    {{ vite()->set(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js']) }}
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+
+    <link rel="preload" as="image" href="{{ url('cache/logo/bagisto.png') }}">
+
+    @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
+        <link type="image/x-icon" href="{{ Storage::url($favicon) }}" rel="shortcut icon" sizes="16x16">
+    @else
+        <link type="image/x-icon" href="{{ vite()->asset('images/favicon.ico') }}" rel="shortcut icon"
+            sizes="16x16" />
+>>>>>>> upstream/main
     @endif
 
     @php
@@ -94,10 +128,14 @@
 <body class="h-full font-inter dark:bg-gray-950">
     {!! view_render_event('admin.layout.body.before') !!}
 
+<<<<<<< HEAD
     <div
         id="app"
         class="h-full"
     >
+=======
+    <div id="app" class="h-full">
+>>>>>>> upstream/main
         <!-- Flash Message Blade Component -->
         <x-admin::flash-group />
 
@@ -109,6 +147,7 @@
         <!-- Page Header Blade Component -->
         <x-admin::layouts.header />
 
+<<<<<<< HEAD
         <div
             class="group/container sidebar-collapsed flex gap-4"
             ref="appLayout"
@@ -117,6 +156,14 @@
             <x-admin::layouts.sidebar.desktop />
 
             <div class="flex min-h-[calc(100vh-62px)] max-w-full flex-1 flex-col bg-gray-100 pt-3 transition-all duration-300 dark:bg-gray-950">
+=======
+        <div class="group/container sidebar-collapsed flex gap-4" ref="appLayout">
+            <!-- Page Sidebar Blade Component -->
+            <x-admin::layouts.sidebar.desktop />
+
+            <div
+                class="flex min-h-[calc(100vh-62px)] max-w-full flex-1 flex-col bg-gray-100 pt-3 transition-all duration-300 dark:bg-gray-950">
+>>>>>>> upstream/main
                 <!-- Page Content Blade Component -->
                 <div class="px-4 pb-6 ltr:lg:pl-[85px] rtl:lg:pr-[85px]">
                     {{ $slot }}
@@ -124,7 +171,12 @@
 
                 <!-- Powered By -->
                 <div class="mt-auto pt-6">
+<<<<<<< HEAD
                     <div class="border-t bg-white py-5 text-center text-sm font-normal dark:border-gray-800 dark:bg-gray-900 dark:text-white max-md:py-3">
+=======
+                    <div
+                        class="border-t bg-white py-5 text-center text-sm font-normal dark:border-gray-800 dark:bg-gray-900 dark:text-white max-md:py-3">
+>>>>>>> upstream/main
                         <p>{!! core()->getConfigData('general.settings.footer.label') !!}</p>
                     </div>
                 </div>
