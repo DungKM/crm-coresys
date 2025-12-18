@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Webkul\Activity\Models\ActivityProxy;
 use Webkul\Activity\Traits\LogsActivity;
 use Webkul\Attribute\Traits\CustomAttribute;
@@ -17,19 +16,10 @@ use Webkul\Lead\Contracts\Lead as LeadContract;
 use Webkul\Quote\Models\QuoteProxy;
 use Webkul\Tag\Models\TagProxy;
 use Webkul\User\Models\UserProxy;
-use Database\Factories\LeadFactory;
 
 class Lead extends Model implements LeadContract
 {
-    use CustomAttribute, LogsActivity, HasFactory;
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return LeadFactory::new();
-    }
+    use CustomAttribute, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -58,7 +48,7 @@ class Lead extends Model implements LeadContract
      * @var array
      */
     protected $casts = [
-        'closed_at' => 'datetime:D M d, Y H:i A',
+        'closed_at'           => 'datetime:D M d, Y H:i A',
         'expected_close_date' => 'date:D M d, Y',
     ];
 
@@ -164,7 +154,7 @@ class Lead extends Model implements LeadContract
      */
     public function getRottenDaysAttribute()
     {
-        if (!$this->stage) {
+        if (! $this->stage) {
             return 0;
         }
 
@@ -172,7 +162,7 @@ class Lead extends Model implements LeadContract
             return 0;
         }
 
-        if (!$this->created_at) {
+        if (! $this->created_at) {
             return 0;
         }
 

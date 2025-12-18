@@ -12,8 +12,8 @@
         "barryvdh/laravel-dompdf": "^2.0.0",
         "diglactic/laravel-breadcrumbs": "^8.0",
         "doctrine/dbal": "^3.0",
-        "enshrined/svg-sanitize": "^0.21.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "enshrined/svg-sanitize": "^0.22.0",
+        "guzzlehttp/guzzle": "^7.9",
         "khaled.alshamaa/ar-php": "^6.3",
         "konekt/concord": "^1.10",
         "laravel/framework": "^10.0",
@@ -24,6 +24,7 @@
         "mpdf/mpdf": "^8.2",
         "prettus/l5-repository": "^2.7.9",
         "smalot/pdfparser": "^2.11",
+        "stichoza/google-translate-php": "^5.3",
         "webklex/laravel-imap": "^5.3"
     },
     "require-dev": {
@@ -75,8 +76,7 @@
             "Webkul\\User\\": "packages/Webkul/User/src",
             "Webkul\\Warehouse\\": "packages/Webkul/Warehouse/src",
             "Webkul\\WebForm\\": "packages/Webkul/WebForm/src",
-            "Webkul\\Automation\\": "packages/Webkul/Automation/src",
-            "Webkul\\LeadAssignment\\": "packages/Webkul/LeadAssignment/src"
+            "Webkul\\Automation\\": "packages/Webkul/Automation/src"
         }
     },
     "autoload-dev": {
