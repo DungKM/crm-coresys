@@ -95,20 +95,20 @@
                                             class="flex flex-col gap-1"
                                             v-if="activity.title"
                                         >
-                                            <p class="flex flex-wrap items-center gap-1 font-medium dark:text-white">
+                                            <p class="flex flex-wrap items-center gap-1 font-medium text-gray-800 dark:text-white">
                                                 @{{ activity.title }}
 
                                                 <template v-if="activity.type == 'system' && activity.additional">
-                                                    <p class="flex items-center gap-1">
+                                                    <p class="flex items-center gap-1 text-gray-800 dark:text-white">
                                                         <span>:</span>
 
-                                                        <span class="break-words">
+                                                        <span class="break-words text-gray-700 dark:text-gray-200">
                                                             @{{ (activity.additional.old.label ? String(activity.additional.old.label).replaceAll('<br>', ' ') : "@lang('admin::app.components.activities.index.empty')") }}
                                                         </span>
 
                                                         <span class="icon-stats-up rotate-90 text-xl"></span>
 
-                                                        <span class="break-words">
+                                                        <span class="break-words text-gray-700 dark:text-gray-200">
                                                             @{{ (activity.additional.new.label ? String(activity.additional.new.label).replaceAll('<br>', ' ') : "@lang('admin::app.components.activities.index.empty')") }}
                                                         </span>
                                                     </p>
@@ -116,13 +116,13 @@
                                             </p>
 
                                             <template v-if="activity.type == 'email'">
-                                                <p class="dark:text-white">
+                                                <p class="text-gray-800 dark:text-white">
                                                     @lang('admin::app.components.activities.index.from'):
 
                                                     @{{ activity.additional.from }}
                                                 </p>
 
-                                                <p class="dark:text-white">
+                                                <p class="text-gray-800 dark:text-white">
                                                     @lang('admin::app.components.activities.index.to'):
 
                                                     @{{ activity.additional.to.join(', ') }}
@@ -130,7 +130,7 @@
 
                                                 <p
                                                     v-if="activity.additional.cc"
-                                                    class="dark:text-white"
+                                                    class="text-gray-800 dark:text-white"
                                                 >
                                                     @lang('admin::app.components.activities.index.cc'):
 
@@ -139,7 +139,7 @@
 
                                                 <p
                                                     v-if="activity.additional.bcc"
-                                                    class="dark:text-white"
+                                                    class="text-gray-800 dark:text-white"
                                                 >
                                                     @lang('admin::app.components.activities.index.bcc'):
 
@@ -151,7 +151,7 @@
                                                 <!-- Activity Schedule -->
                                                 <p
                                                     v-if="activity.schedule_from && activity.schedule_from"
-                                                    class="dark:text-white"
+                                                    class="text-gray-800 dark:text-white"
                                                 >
                                                     @lang('admin::app.components.activities.index.scheduled-on'):
 
@@ -161,7 +161,7 @@
                                                 <!-- Activity Participants -->
                                                 <p
                                                     v-if="activity.participants?.length"
-                                                    class="dark:text-white"
+                                                    class="text-gray-800 dark:text-white"
                                                 >
                                                     @lang('admin::app.components.activities.index.participants'):
 
@@ -173,7 +173,7 @@
                                                 <!-- Activity Location -->
                                                 <p
                                                     v-if="activity.location"
-                                                    class="dark:text-white"
+                                                    class="text-gray-800 dark:text-white"
                                                 >
                                                     @lang('admin::app.components.activities.index.location'):
 
@@ -188,7 +188,7 @@
 
                                         <!-- Activity Description -->
                                         <p
-                                            class="dark:text-white"
+                                            class="text-gray-800 dark:text-white"
                                             v-if="activity.comment"
                                             v-safe-html="activity.comment"
                                         ></p>

@@ -284,6 +284,13 @@ class LeadDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('leads.view')) {
             $this->addAction([
+                'icon'   => 'icon-chat',
+                'title'  => 'WhatsApp Chat',
+                'method' => 'GET',
+                'url'    => fn ($row) => route('admin.leads.view', $row->id) . '?from=whatsapp',
+            ]);
+
+            $this->addAction([
                 'icon'   => 'icon-eye',
                 'title'  => trans('admin::app.leads.index.datagrid.view'),
                 'method' => 'GET',

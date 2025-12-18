@@ -61,4 +61,7 @@ Route::controller(LeadController::class)->prefix('leads')->group(function () {
     Route::controller(QuoteController::class)->prefix('{id}/quotes')->group(function () {
         Route::delete('{quote_id?}', 'delete')->name('admin.leads.quotes.delete');
     });
+
+    // WhatsApp Message Route
+    Route::post('{id}/send-whatsapp', 'sendWhatsAppMessage')->name('admin.leads.send-whatsapp');
 });
