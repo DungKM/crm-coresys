@@ -1,9 +1,15 @@
 <?php
 
 return [
+  'facebook' => [
+    'index' => [
+        'title' => 'Facebook',
+    ],
+  ],
   'acl' => 
   [
     'leads' => 'Khách hàng tiềm năng',
+    'facebook' => 'Facebook',
     'lead' => 'Chỉ huy',
     'quotes' => 'Báo giá',
     'mail' => 'Thư',
@@ -2336,6 +2342,7 @@ return [
   ],
   'layouts' => 
   [
+    'facebook' => 'Facebook',
     'app-version' => 'Phiên bản: :phiên bản',
     'dashboard' => 'Trang tổng quan',
     'leads' => 'Khách hàng tiềm năng',

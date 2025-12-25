@@ -295,5 +295,14 @@ return [
         'sort'       => 9,
         'icon-class' => 'icon-configuration',
     ],
-
+    /**
+     * Facebook.
+     */
+    [
+        'key'        => 'facebook',
+        'name'       => 'admin::app.layouts.facebook',
+        'route'      => 'admin.facebook.index',
+        'sort'       => 10,
+        'icon-class' => 'icon-facebook2',
+    ]
 ];
