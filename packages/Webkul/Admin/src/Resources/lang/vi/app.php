@@ -1,9 +1,21 @@
 <?php
 
 return [
+  'facebook' => [
+    'index' => [
+        'title' => 'Facebook',
+    ],
+  ],
+  'social-message' => [
+    'index' => [
+        'title' => 'Chat Socials',
+    ],
+  ],
   'acl' => 
   [
     'leads' => 'Khách hàng tiềm năng',
+    'facebook' => 'Facebook',
+    'social-message' => 'Chat Messenger',
     'lead' => 'Chỉ huy',
     'quotes' => 'Báo giá',
     'mail' => 'Thư',
@@ -380,7 +392,7 @@ return [
     [
       'powered-by' => 
       [
-        'description' => 'Được cung cấp bởi :krayin, một dự án mã nguồn mở của :webkul.',
+        'description' => 'Salehub - Hệ thống CRM mã nguồn mở mạnh mẽ dành cho doanh nghiệp của bạn',
       ],
       'header' => 
       [
@@ -2336,6 +2348,8 @@ return [
   ],
   'layouts' => 
   [
+    'social-message' => 'Chat Socials',
+    'facebook' => 'Facebook',
     'app-version' => 'Phiên bản: :phiên bản',
     'dashboard' => 'Trang tổng quan',
     'leads' => 'Khách hàng tiềm năng',

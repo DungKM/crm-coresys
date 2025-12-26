@@ -207,7 +207,7 @@ class Installer extends Command
         $this->updateEnvVariable(
             'APP_NAME',
             'Please enter the application name',
-            env('APP_NAME', 'Krayin CRM')
+            env('APP_NAME', 'SaleHub CRM')
         );
 
         $this->updateEnvVariable(
