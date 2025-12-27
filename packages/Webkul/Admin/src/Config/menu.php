@@ -305,12 +305,5 @@ return [
         'route'      => 'admin.social-message.index',
         'sort'       => 11,
         'icon-class' => 'icon-facebook2',
-    ],
-      [
-        'key'        => 'social-message.facebook',
-        'name'       => 'admin::app.layouts.facebook',
-        'route'      => 'admin.facebook.index',
-        'sort'       => 1,
-        'icon-class' => 'icon-facebook2',
-    ],
+    ]
 ];

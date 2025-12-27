@@ -38,6 +38,7 @@
                 'name' => 'Facebook',
                 'icon' => 'messenger.png',
                 'desc' => 'Messenger',
+                'url'  => route('admin.facebook.index'),
             ],
             [
                 'key' => 'zalo_oa',
@@ -66,7 +67,7 @@
             [
                 'key' => 'telegram',
                 'name' => 'Telegram',
-                'icon' => 'telegram.png',
+                'icon' => 'telegram.jpg',
                 'desc' => 'Business',
             ],
             [
@@ -87,7 +88,7 @@
     @foreach ($platforms as $p)
         @php $count = $unread[$p['key']] ?? 0; @endphp
 
-        <a href="#"
+        <a href="{{$p['url'] ?? '#'}}"
            class="relative aspect-square rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition
                   hover:-translate-y-0.5 hover:shadow-md
                   dark:border-gray-800 dark:bg-gray-900">

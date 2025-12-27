@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // routes/api.php
 Route::match(['GET','POST'], '/webhook/facebook', [FacebookWebhookController::class, 'handle']);
+Route::get('/webhook/facebook', [FacebookWebhookController::class, 'verify']);
