@@ -202,6 +202,7 @@ return [
          */
         Webkul\Activity\Providers\ActivityServiceProvider::class,
         Webkul\Admin\Providers\AdminServiceProvider::class,
+        Webkul\Instagram\Providers\AdminServiceProvider::class,
         Webkul\Attribute\Providers\AttributeServiceProvider::class,
         Webkul\Automation\Providers\WorkflowServiceProvider::class,
         Webkul\Contact\Providers\ContactServiceProvider::class,
