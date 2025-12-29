@@ -27,7 +27,10 @@ class FacebookWebhookController extends Controller
         // 2) RECEIVE EVENT (POST)
         $payload = $request->all();
         logger()->info('FB_WEBHOOK_RAW', $payload);
-
+        logger()->info('IG_WEBHOOK_HIT', [
+            'method' => request()->method(),
+            'body'   => request()->all(),
+        ]);
         // chỉ xử lý event Messenger (page->messages)
         foreach (($payload['entry'] ?? []) as $entry) {
             foreach (($entry['messaging'] ?? []) as $event) {
@@ -85,36 +88,35 @@ class FacebookWebhookController extends Controller
     }
 
     private function fetchFbProfile(string $psid): ?array
-{
-    $pageToken = env('FB_PAGE_TOKEN'); // Page Access Token
-    if (!$pageToken) return null;
+    {
+        $pageToken = env('FB_PAGE_TOKEN'); // Page Access Token
+        if (!$pageToken) return null;
 
-    $res = Http::timeout(10)->get("https://graph.facebook.com/v19.0/{$psid}", [
-        'fields' => 'first_name,last_name,profile_pic',
-        'access_token' => $pageToken,
-    ]);
-
-    if (!$res->successful()) {
-        logger()->warning('FB_PROFILE_FETCH_FAILED', [
-            'psid' => $psid,
-            'status' => $res->status(),
-            'body' => $res->body(),
+        $res = Http::timeout(10)->get("https://graph.facebook.com/v19.0/{$psid}", [
+            'fields' => 'first_name,last_name,profile_pic',
+            'access_token' => $pageToken,
         ]);
-        return null;
+
+        if (!$res->successful()) {
+            logger()->warning('FB_PROFILE_FETCH_FAILED', [
+                'psid' => $psid,
+                'status' => $res->status(),
+                'body' => $res->body(),
+            ]);
+            return null;
+        }
+
+        $d = $res->json();
+        $name = trim(($d['first_name'] ?? '') . ' ' . ($d['last_name'] ?? ''));
+
+        return [
+            'name'   => $name !== '' ? $name : null,
+            'avatar' => $d['profile_pic'] ?? null,
+        ];
     }
-
-    $d = $res->json();
-    $name = trim(($d['first_name'] ?? '') . ' ' . ($d['last_name'] ?? ''));
-
-    return [
-        'name'   => $name !== '' ? $name : null,
-        'avatar' => $d['profile_pic'] ?? null,
-    ];
-}
 
     private function ensureConversationProfile(FacebookConversation $convo): void
     {
-        // Nếu đã có tên rồi thì thôi (hoặc bạn có thể refresh theo ngày sau)
         if (!empty($convo->name) && !empty($convo->avatar) && str_starts_with((string)$convo->avatar, 'http')) {
             return;
         }

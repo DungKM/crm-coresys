@@ -9,7 +9,7 @@ class FacebookMessengerService implements FacebookMessengerContract
 {
     public function sendText(string $psid, string $text): array
     {
-        $token = config('services.facebook.page_token');
+        $token = env('FB_PAGE_TOKEN');
 
         $payload = [
             'recipient' => ['id' => $psid],

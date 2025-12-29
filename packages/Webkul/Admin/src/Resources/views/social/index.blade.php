@@ -51,6 +51,7 @@
                 'name' => 'Instagram',
                 'icon' => 'instagram.png',
                 'desc' => 'Direct',
+                'url'  => route('admin.instagram.index'),
             ],
             [
                 'key' => 'whatsapp',
