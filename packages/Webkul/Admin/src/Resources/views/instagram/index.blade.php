@@ -4,7 +4,6 @@
     </x-slot>
 
     <v-instagram></v-instagram>
-
     @pushOnce('scripts')
         {{-- ================= TEMPLATE ================= --}}
         <script type="text/x-template" id="v-instagram-template">

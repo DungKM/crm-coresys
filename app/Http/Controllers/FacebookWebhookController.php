@@ -11,7 +11,6 @@ class FacebookWebhookController extends Controller
 {
     public function handle(Request $request)
     {
-        // 1) VERIFY WEBHOOK (GET)
         if ($request->isMethod('get')) {
            $mode      = $request->query('hub_mode');
            $token     = $request->query('hub_verify_token');
@@ -24,23 +23,19 @@ class FacebookWebhookController extends Controller
             return response('Invalid verify token', 403);
         }
 
-        // 2) RECEIVE EVENT (POST)
         $payload = $request->all();
         logger()->info('FB_WEBHOOK_RAW', $payload);
         logger()->info('IG_WEBHOOK_HIT', [
             'method' => request()->method(),
             'body'   => request()->all(),
         ]);
-        // chỉ xử lý event Messenger (page->messages)
         foreach (($payload['entry'] ?? []) as $entry) {
             foreach (($entry['messaging'] ?? []) as $event) {
 
-                // Bỏ qua echo (tin do page gửi ra cũng bắn về webhook dạng is_echo)
                 if (!empty($event['message']['is_echo'])) {
                     continue;
                 }
 
-                // Chỉ xử lý message text (có thể mở rộng attachments sau)
                 if (empty($event['message'])) {
                     continue;
                 }
@@ -54,18 +49,15 @@ class FacebookWebhookController extends Controller
 
                 $sentAt = $ts ? Carbon::createFromTimestampMs((int) $ts) : now();
 
-                // 2.1) Upsert conversation
                 $convo = FacebookConversation::firstOrCreate(
                     ['psid' => $psid],
                     ['unread' => true]
                 );
 
-                // 2.2) Chống trùng khi Facebook retry webhook
                 if ($mid && FacebookMessage::where('fb_mid', $mid)->exists()) {
                     continue;
                 }
 
-                // 2.3) Save message
                 FacebookMessage::create([
                     'conversation_id' => $convo->id,
                     'direction'       => 'in',
@@ -75,7 +67,6 @@ class FacebookWebhookController extends Controller
                     'sent_at'         => $sentAt,
                 ]);
 
-                // 2.4) Update convo preview
                 $convo->update([
                     'unread'       => true,
                     'last_snippet' => $text ? mb_strimwidth($text, 0, 80, '…') : 'New message',
@@ -89,7 +80,7 @@ class FacebookWebhookController extends Controller
 
     private function fetchFbProfile(string $psid): ?array
     {
-        $pageToken = env('FB_PAGE_TOKEN'); // Page Access Token
+        $pageToken = env('FB_PAGE_TOKEN');
         if (!$pageToken) return null;
 
         $res = Http::timeout(10)->get("https://graph.facebook.com/v19.0/{$psid}", [
