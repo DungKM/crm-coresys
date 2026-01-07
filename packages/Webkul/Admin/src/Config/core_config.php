@@ -58,7 +58,7 @@ return [
                 'name'       => 'label',
                 'title'      => 'admin::app.configuration.index.general.settings.footer.powered-by',
                 'type'       => 'editor',
-                'default'    => 'Powered by <span style="color: rgb(14, 144, 217);"><a href="http://www.krayincrm.com" target="_blank">Krayin</a></span>, an open-source project by <span style="color: rgb(14, 144, 217);"><a href="https://webkul.com" target="_blank">Webkul</a></span>.',
+                'default' => 'Developed & Powered by <a href="http://www.coresyscompany.com" target="_blank" style="color:#0E90D9;font-weight:600;">CoreSys</a>',
                 'tinymce'    => true,
             ],
         ],

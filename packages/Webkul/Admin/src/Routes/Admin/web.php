@@ -54,3 +54,18 @@ require 'rest-routes.php';
  * WhatsApp routes.
  */
 require 'whatsapp-routes.php';
+
+/**
+ * Facebook routes.
+ */
+require 'facebook-routes.php';
+
+/**
+ * Social routes.
+ */
+require 'social-routes.php';
+
+/**
+ * Instagram routes.
+ */
+require 'instagram-routes.php';

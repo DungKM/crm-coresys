@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FacebookWebhookController;
+use App\Http\Controllers\InstagramWebhookController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +20,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// routes/api.php
+Route::match(['GET','POST'], '/webhook/facebook', [FacebookWebhookController::class, 'handle']);
+Route::match(['GET','POST'], '/webhook/instagram', [InstagramWebhookController::class, 'handle']);
+
+Route::get('/webhook/facebook', [FacebookWebhookController::class, 'verify']);
