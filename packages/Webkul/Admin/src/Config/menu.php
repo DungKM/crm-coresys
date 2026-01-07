@@ -305,5 +305,28 @@ return [
         'route'      => 'admin.social-message.index',
         'sort'       => 11,
         'icon-class' => 'icon-facebook2',
-    ]
+    ],
+    /**
+     * Workflow.
+     */
+  
+    [
+        'key'        => 'workflow',
+        'name'       => 'admin::app.layouts.workflow',
+        'route'      => 'admin.workflow.index',
+        'sort'       => 12,
+        'icon-class' => 'icon-workflow',
+    ], [
+        'key'        => 'workflow.dashboard',
+        'name'       => 'admin::app.layouts.dashboard',
+        'route'      => 'admin.workflow.dashboard.index',
+        'sort'       => 1,
+        'icon-class' => '',
+    ], [
+        'key'        => 'workflow.connectkey',
+        'name'       => 'admin::app.layouts.connectkey',
+        'route'      => 'admin.workflow.connectkey.index',
+        'sort'       => 2,
+        'icon-class' => '',
+    ],
 ];

@@ -11,6 +11,11 @@ return [
         'title' => 'Chat Socials',
     ],
   ],
+  'workflows' => [
+    'index' => [
+        'title' => 'Workflows',
+    ],
+  ],
   'acl' => 
   [
     'leads' => 'Khách hàng tiềm năng',
@@ -2349,6 +2354,9 @@ return [
   'layouts' => 
   [
     'social-message' => 'Chat Socials',
+    'workflow' => 'Workflow',
+    'dashboard' => 'Trang tổng quan',
+    'connectkey' => 'Kết nối (Keys)',
     'facebook' => 'Facebook',
     'app-version' => 'Phiên bản: :phiên bản',
     'dashboard' => 'Trang tổng quan',

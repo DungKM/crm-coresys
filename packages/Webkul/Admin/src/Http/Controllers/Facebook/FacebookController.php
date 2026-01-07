@@ -2,7 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Facebook;
 
-use Webkul\Admin\Http\Controllers\Controller;   // ✅ thêm dòng này
+use Webkul\Admin\Http\Controllers\Controller;
 use Illuminate\View\View;
 
 class FacebookController extends Controller
