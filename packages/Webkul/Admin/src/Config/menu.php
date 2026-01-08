@@ -329,4 +329,25 @@ return [
         'sort'       => 2,
         'icon-class' => '',
     ],
+    [
+        'key'        => 'workflow.contentlibrary',
+        'name'       => 'admin::app.layouts.contentlibrary',
+        'route'      => 'admin.workflow.contentlibrary.index',
+        'sort'       => 3,
+        'icon-class' => '',
+    ],
+    [
+        'key'        => 'workflow.automation',
+        'name'       => 'admin::app.layouts.automation',
+        'route'      => 'admin.workflow.automation.index',
+        'sort'       => 4,
+        'icon-class' => '',
+    ],
+    [
+        'key'        => 'workflow.history',
+        'name'       => 'admin::app.layouts.history',
+        'route'      => 'admin.workflow.history.index',
+        'sort'       => 5,
+        'icon-class' => '',
+    ]
 ];
