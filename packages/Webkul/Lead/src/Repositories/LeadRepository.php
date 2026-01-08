@@ -205,7 +205,7 @@ class LeadRepository extends Repository
              * otherwise, use the provided collection of attributes.
              */
             if (is_array($attributes)) {
-                $conditions = ['entity_type' => $data['entity_type']];
+                $conditions = ['entity_type' => $data['entity_type'] ?? 'lead'];
 
                 if (isset($data['quick_add'])) {
                     $conditions['quick_add'] = 1;

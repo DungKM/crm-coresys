@@ -1,0 +1,15 @@
+{
+    "name": "webkul/appointment",
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Appointment\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Appointment\\Providers\\AppointmentServiceProvider"
+            ]
+        }
+    }
+}
