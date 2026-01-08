@@ -90,26 +90,35 @@
                             <div class="flex-1 min-h-0 overflow-y-auto px-2 pb-3">
                                 <button
                                     v-for="c in filteredConvos"
-                                    :key="c.id"
+                                    :key="c.psid"
                                     type="button"
                                     class="flex w-full items-center gap-3 rounded-xl p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800"
-                                    :class="activeId===c.id ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''"
-                                    @click="openChat(c.id)"
+                                    :class="activeId===c.psid ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''"
+                                    @click="openChat(c.psid)"
                                 >
-                                    <div class="relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-violet-400 font-bold text-white">
-                                        @{{ c.avatar }}
+                                    <div class="relative h-11 w-11">
+                                        <!-- Avatar circle (crop ảnh) -->
+                                        <div class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-violet-400 font-bold text-white overflow-hidden">
+                                            <img
+                                                v-if="c.avatar && ('' + c.avatar).startsWith('http')"
+                                                :src="c.avatar"
+                                                class="h-full w-full object-cover"
+                                                referrerpolicy="no-referrer"
+                                            />
+                                            <span v-else>@{{ c.avatar }}</span>
+                                        </div>
 
+                                        <!-- Status dot (nằm ngoài overflow-hidden) -->
                                         <span
-                                            v-if="activeId===c.id"
-                                            class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-900"
+                                            v-if="activeId===c.psid"
+                                            class="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-white dark:border-gray-900"
                                         ></span>
 
                                         <span
                                             v-else
-                                            class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-transparent dark:border-gray-900"
+                                             class="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-white dark:border-gray-900"
                                         ></span>
                                     </div>
-
                                     <div class="min-w-0 flex-1">
                                         <div class="truncate text-sm font-bold dark:text-white">
                                             @{{ c.name }}
@@ -122,6 +131,14 @@
                                     <div class="text-xs text-gray-400 dark:text-gray-500">
                                         @{{ c.time }}
                                     </div>
+                                    <button
+                                    type="button"
+                                    class="ml-2 rounded-full px-2 py-1 text-xs text-red-500 hover:bg-red-50"
+                                    title="Xóa đoạn chat"
+                                    @click.stop="deleteConversation(c.psid)"
+                                    >
+                                    🗑️
+                                    </button>
                                 </button>
                             </div>
                         </div>
@@ -131,11 +148,24 @@
                             <!-- Chat header -->
                             <div class="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
                                 <div class="flex min-w-0 items-center gap-3">
-                                    <div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-300 to-violet-400 font-bold text-white">
-                                        @{{ activeConvo?.avatar || 'C' }}
-                                        <span class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500 dark:border-gray-900"></span>
-                                    </div>
+                                    <div class="relative h-10 w-10">
+                                        <!-- vòng tròn avatar (crop ảnh) -->
+                                        <div class="h-10 w-10 rounded-full overflow-hidden bg-gradient-to-br from-sky-300 to-violet-400 flex items-center justify-center font-bold text-white">
+                                            <img
+                                                v-if="activeConvo?.avatar && ('' + activeConvo.avatar).startsWith('http')"
+                                                :src="activeConvo.avatar"
+                                                class="h-full w-full object-cover"
+                                                referrerpolicy="no-referrer"
+                                            />
+                                            <span v-else>@{{ activeConvo?.avatar || 'C' }}</span>
+                                        </div>
 
+                                        <!-- chấm trạng thái (nằm ngoài overflow-hidden) -->
+                                        <span
+                                            class="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500
+                                                border-2 border-white dark:border-gray-900"
+                                        ></span>
+                                    </div>
                                     <div class="min-w-0">
                                         <div class="truncate font-bold dark:text-white">
                                             @{{ activeConvo?.name || 'Chat' }}
@@ -209,115 +239,166 @@
 
         <script type="module">
             app.component('v-facebook', {
-                template: '#v-facebook-template',
+            template: '#v-facebook-template',
 
-                data() {
-                    return {
-                        q: '',
-                        filter: 'all',
-                        activeId: 'c2',
-                        draft: '',
-                        convos: [
-                            { id:'c1', name:'Khu Vườn Trên Mây ☁️', snippet:'Cuộc gọi đang diễn ra', time:'1 phút', type:'group', unread:true, avatar:'KV' },
-                            { id:'c2', name:'Chị Xinh Đẹp 😂😂😂', snippet:'Bạn: Dạ', time:'1 giờ', type:'dm', unread:false, avatar:'CX' },
-                            { id:'c3', name:'Phi Hùng', snippet:'Cuộc gọi video đã kết thúc.', time:'2 giờ', type:'dm', unread:false, avatar:'PH' },
-                            { id:'c4', name:'Cherry Nguyễn', snippet:'Ủ đây chị thấy bảo bị tắt...', time:'3 giờ', type:'dm', unread:true, avatar:'CN' },
-                            { id:'c5', name:'Victoria Fitness', snippet:'Dạ vâng. Cảm ơn bạn ạ', time:'9 giờ', type:'group', unread:false, avatar:'VF' },
-                        ],
-                        messages: {
-                            c2: [
-                                { from:'in',  text:'Hehe', at:'21:02' },
-                                { from:'in',  text:'Béo như cục thịt', at:'21:02' },
-                                { from:'out', text:'Dạo này béo à ❤️', at:'21:03' },
-                                { from:'in',  text:'Dai zai 😆', at:'21:04' },
-                                { from:'in',  text:'Béo', at:'21:04' },
-                                { from:'in',  text:'K chui vừa lỗ kia nữa r', at:'21:05' },
-                                { from:'in',  text:'Ngủ đây', at:'21:05' },
-                                { from:'out', text:'Dạ', at:'21:06' },
-                            ],
-                            c1: [{ from:'in', text:'(Group) Cuộc gọi đang diễn ra…', at:'20:34' }],
-                            c3: [{ from:'in', text:'Cuộc gọi video đã kết thúc.', at:'19:10' }],
-                            c4: [{ from:'in', text:'Ủ đây chị thấy bảo bị tắt...', at:'18:22' }],
-                            c5: [{ from:'in', text:'Dạ vâng. Cảm ơn bạn ạ', at:'12:05' }],
+            data() {
+                return {
+                q: '',
+                filter: 'all',
+                activeId: null,        // psid
+                draft: '',
+
+                convos: [],
+                _activeConvo: null,
+                _activeMessages: [],
+
+                _timer: null,
+                };
+            },
+
+            computed: {
+                filteredConvos() {
+                const q = (this.q || '').toLowerCase().trim();
+
+                return (this.convos || []).filter(c => {
+                    if (this.filter === 'unread' && !c.unread) return false;
+                    if (this.filter === 'group' && c.type !== 'group') return false;
+
+                    if (q) {
+                    const name = (c.name || '').toLowerCase();
+                    const snip = (c.snippet || '').toLowerCase();
+                    if (!name.includes(q) && !snip.includes(q)) return false;
+                    }
+                    return true;
+                });
+                },
+
+                activeConvo() {
+                return this._activeConvo;
+                },
+
+                activeMessages() {
+                return this._activeMessages;
+                },
+            },
+
+            methods: {
+                async safeJson(res) {
+                    const ct = res.headers.get('content-type') || '';
+                    if (!ct.includes('application/json')) {
+                    const html = await res.text();
+                    console.error('Non-JSON response:', res.status, html);
+                    throw new Error('API returned HTML (likely redirected to login or 404)');
+                    }
+                    return res.json();
+                },
+
+                async fetchConvos() {
+                    const res = await fetch(`/admin/facebook/conversations?q=${encodeURIComponent(this.q || '')}`);
+                    this.convos = await res.json();
+
+                    if (!this.activeId && this.convos.length) {
+                        await this.openChat(this.convos[0].psid);
+                    }
+                },
+                async deleteConversation(psid = null) {
+                    const target = psid || this.activeId;
+                    if (!target) return;
+
+                    if (!confirm('Xóa đoạn chat này trong CRM?')) return;
+
+                    const res = await fetch('/admin/facebook/conversation', {
+                        method: 'DELETE',
+                        credentials: 'same-origin',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                         },
-                    };
+                        body: JSON.stringify({ psid: target }),
+                    });
+
+                    const data = await this.safeJson(res);
+                    if (!res.ok || !data.ok) {
+                        alert(data?.message || 'Xóa thất bại');
+                        return;
+                    }
+
+                    // nếu đang mở đúng chat bị xóa thì reset
+                    if (this.activeId === target) {
+                        this.activeId = null;
+                        this._activeConvo = null;
+                        this._activeMessages = [];
+                    }
+
+                    await this.fetchConvos();
+                },
+                async openChat(psid) {
+                    this.activeId = psid;
+
+                    const res = await fetch(`/admin/facebook/messages?psid=${encodeURIComponent(psid)}`, {
+                    credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+
+                    const data = await this.safeJson(res);
+
+                    this._activeConvo = data.conversation;
+                    this._activeMessages = data.messages;
+
+                    this.$nextTick(() => this.scrollToBottom());
                 },
 
-                computed: {
-                    filteredConvos() {
-                        const q = (this.q || '').toLowerCase().trim();
+                async send() {
+                    const text = (this.draft || '').trim();
+                    if (!text || !this.activeId) return;
 
-                        return this.convos.filter(c => {
-                            if (this.filter === 'unread' && !c.unread) return false;
-                            if (this.filter === 'group' && c.type !== 'group') return false;
-
-                            if (q) {
-                                const name = (c.name || '').toLowerCase();
-                                const snip = (c.snippet || '').toLowerCase();
-                                if (!name.includes(q) && !snip.includes(q)) return false;
-                            }
-
-                            return true;
-                        });
+                    const res = await fetch('/admin/facebook/send', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                     },
+                    body: JSON.stringify({ psid: this.activeId, text }),
+                    });
 
-                    activeConvo() {
-                        return this.convos.find(c => c.id === this.activeId);
-                    },
+                    const data = await this.safeJson(res);
+                    if (!res.ok) throw new Error(data?.message || 'Send failed');
 
-                    activeMessages() {
-                        return this.messages[this.activeId] || [];
-                    },
+                    this.draft = '';
+                    await this.openChat(this.activeId); // reload messages
                 },
-
-                methods: {
-                    openChat(id) {
-                        this.activeId = id;
-                        this.$nextTick(() => this.scrollToBottom());
-                    },
-
-                    send() {
-                        const text = (this.draft || '').trim();
-                        if (!text) return;
-
-                        const now = new Date();
-                        const hh = String(now.getHours()).padStart(2, '0');
-                        const mm = String(now.getMinutes()).padStart(2, '0');
-
-                        if (!this.messages[this.activeId]) this.messages[this.activeId] = [];
-
-                        this.messages[this.activeId].push({
-                            from: 'out',
-                            text,
-                            at: `${hh}:${mm}`,
-                        });
-
-                        const convo = this.convos.find(c => c.id === this.activeId);
-                        if (convo) {
-                            convo.snippet = `Bạn: ${text}`;
-                            convo.time = 'vừa xong';
-                            convo.unread = false;
-                        }
-
-                        this.draft = '';
-                        this.$nextTick(() => this.scrollToBottom());
-                    },
-
-                    scrollToBottom() {
-                        const el = this.$refs.body;
-                        if (!el) return;
-                        el.scrollTop = el.scrollHeight;
-                    },
-
-                    resetDemo() {
-                        window.location.reload();
-                    },
+                scrollToBottom() {
+                const el = this.$refs.body;
+                if (!el) return;
+                el.scrollTop = el.scrollHeight;
                 },
+            },
 
-                mounted() {
-                    this.scrollToBottom();
-                },
+            mounted() {
+                this.fetchConvos();
+
+                // cập nhật liên tục để thấy tin mới (webhook lưu DB -> UI pull)
+                this._timer = setInterval(async () => {
+                await this.fetchConvos();
+
+                if (this.activeId) {
+                    const res = await fetch(`/admin/facebook/messages?psid=${encodeURIComponent(this.activeId)}`);
+                    const data = await res.json();
+                    this._activeConvo = data.conversation;
+                    this._activeMessages = data.messages;
+                    this.$nextTick(() => this.scrollToBottom());
+                }
+                }, 3000);
+            },
+
+            beforeUnmount() {
+                clearInterval(this._timer);
+            },
             });
+
         </script>
     @endPushOnce
 </x-admin::layouts>

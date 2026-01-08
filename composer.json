@@ -76,8 +76,7 @@
             "Webkul\\User\\": "packages/Webkul/User/src",
             "Webkul\\Warehouse\\": "packages/Webkul/Warehouse/src",
             "Webkul\\WebForm\\": "packages/Webkul/WebForm/src",
-            "Webkul\\Automation\\": "packages/Webkul/Automation/src",
-            "Webkul\\Appointment\\": "packages/Webkul/Appointment/src"
+            "Webkul\\Automation\\": "packages/Webkul/Automation/src"
         }
     },
     "autoload-dev": {

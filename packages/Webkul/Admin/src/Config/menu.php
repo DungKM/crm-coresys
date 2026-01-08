@@ -306,11 +306,48 @@ return [
         'sort'       => 11,
         'icon-class' => 'icon-facebook2',
     ],
-      [
-        'key'        => 'social-message.facebook',
-        'name'       => 'admin::app.layouts.facebook',
-        'route'      => 'admin.facebook.index',
+    /**
+     * Workflow.
+     */
+  
+    [
+        'key'        => 'workflow',
+        'name'       => 'admin::app.layouts.workflow',
+        'route'      => 'admin.workflow.index',
+        'sort'       => 12,
+        'icon-class' => 'icon-workflow',
+    ], [
+        'key'        => 'workflow.dashboard',
+        'name'       => 'admin::app.layouts.dashboard',
+        'route'      => 'admin.workflow.dashboard.index',
         'sort'       => 1,
-        'icon-class' => 'icon-facebook2',
+        'icon-class' => '',
+    ], [
+        'key'        => 'workflow.connectkey',
+        'name'       => 'admin::app.layouts.connectkey',
+        'route'      => 'admin.workflow.connectkey.index',
+        'sort'       => 2,
+        'icon-class' => '',
     ],
+    [
+        'key'        => 'workflow.contentlibrary',
+        'name'       => 'admin::app.layouts.contentlibrary',
+        'route'      => 'admin.workflow.contentlibrary.index',
+        'sort'       => 3,
+        'icon-class' => '',
+    ],
+    [
+        'key'        => 'workflow.automation',
+        'name'       => 'admin::app.layouts.automation',
+        'route'      => 'admin.workflow.automation.index',
+        'sort'       => 4,
+        'icon-class' => '',
+    ],
+    [
+        'key'        => 'workflow.history',
+        'name'       => 'admin::app.layouts.history',
+        'route'      => 'admin.workflow.history.index',
+        'sort'       => 5,
+        'icon-class' => '',
+    ]
 ];

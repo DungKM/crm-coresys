@@ -64,3 +64,13 @@ require 'facebook-routes.php';
  * Social routes.
  */
 require 'social-routes.php';
+
+/**
+ * Instagram routes.
+ */
+require 'instagram-routes.php';
+
+/**
+ * Workflows routes.
+ */
+require 'workflows-routes.php';

@@ -32,18 +32,73 @@
     .icon-image:before {
         content: "\e956";
     }
+
+    .icon-add::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        -webkit-mask: url("../images/logo-add.svg") no-repeat center /
+            contain;
+        mask: url("../images/logo-add.svg") no-repeat center / contain;
+        background-color: currentColor;
+    }
+
+    .icon-chart-line::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        -webkit-mask: url("../images/logo-line-chart.svg") no-repeat center /
+            contain;
+        mask: url("../images/logo-line-chart.svg") no-repeat center / contain;
+        background-color: currentColor;
+    }
+
+    .icon-facebook-outline::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        -webkit-mask: url("../images/logo-facebook.svg") no-repeat center /
+            contain;
+        mask: url("../images/logo-facebook.svg") no-repeat center / contain;
+        background-color: currentColor;
+    }
+
+    .icon-play::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        -webkit-mask: url("../images/logo-play.svg") no-repeat center /
+            contain;
+        mask: url("../images/logo-play.svg") no-repeat center / contain;
+        background-color: currentColor;
+    }
+
     .icon-facebook2::before {
         content: "";
         display: inline-block;
         width: 1em;
         height: 1em;
-
         -webkit-mask: url("../images/facebook-messenger.svg") no-repeat center /
             contain;
         mask: url("../images/facebook-messenger.svg") no-repeat center / contain;
-
         background-color: currentColor;
     }
+
+    .icon-workflow::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        -webkit-mask: url("../images/logo-workflow.svg") no-repeat center /
+            contain;
+        mask: url("../images/logo-workflow.svg") no-repeat center / contain;
+        background-color: currentColor;
+    }
+
     .icon-bookmark:before {
         content: "\e92c";
     }
