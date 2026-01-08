@@ -222,7 +222,7 @@ return [
         Webkul\WebForm\Providers\WebFormServiceProvider::class,
 
         Webkul\Appointment\Providers\AppointmentServiceProvider::class,
-         Webkul\Appointment\Providers\EventServiceProvider::class,
+        Webkul\Appointment\Providers\EventServiceProvider::class,
     ])->toArray(),
 
     /*
