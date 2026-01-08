@@ -78,7 +78,8 @@
             "Webkul\\WebForm\\": "packages/Webkul/WebForm/src",
             "Webkul\\Automation\\": "packages/Webkul/Automation/src",
             "Webkul\\Facebook\\": "packages/Webkul/Facebook/src",
-            "Webkul\\Instagram\\": "packages/Webkul/Instagram/src"
+            "Webkul\\Instagram\\": "packages/Webkul/Instagram/src",
+            "Webkul\\GoogleAds\\": "packages/Webkul/GoogleAds/src"
         }
     },
     "autoload-dev": {
