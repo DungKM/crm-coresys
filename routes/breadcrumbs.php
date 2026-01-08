@@ -462,3 +462,39 @@ Breadcrumbs::for('dashboard.account.edit', function (BreadcrumbTrail $trail, $us
     $trail->parent('dashboard');
     $trail->push(trans('admin::app.account.edit.title'), route('admin.user.account.edit', $user->id));
 });
+
+// Dashboard > Workflow
+Breadcrumbs::for('workflow', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Workflow', route('admin.workflow.index'));
+});
+
+// Dashboard > Workflow > Dashboard
+Breadcrumbs::for('workflow.dashboard', function (BreadcrumbTrail $trail) {
+    $trail->parent('workflow');
+    $trail->push('Dashboard', route('admin.workflow.dashboard.index'));
+});
+
+// Dashboard > Workflow > Connect Key
+Breadcrumbs::for('workflow.connectkey', function (BreadcrumbTrail $trail) {
+    $trail->parent('workflow');
+    $trail->push('Kết nối Key', route('admin.workflow.connectkey.index'));
+});
+
+// Dashboard > Workflow > Kho nội dung
+Breadcrumbs::for('workflow.contentlibrary', function (BreadcrumbTrail $trail) {
+    $trail->parent('workflow');
+    $trail->push('Kho nội dung', route('admin.workflow.contentlibrary.index'));
+});
+
+// Dashboard > Workflow > Tự động hóa
+Breadcrumbs::for('workflow.automation', function (BreadcrumbTrail $trail) {
+    $trail->parent('workflow');
+    $trail->push('Tự động hóa', route('admin.workflow.automation.index'));
+});
+
+// Dashboard > Workflow > Lịch sử tự động hóa
+Breadcrumbs::for('workflow.history', function (BreadcrumbTrail $trail) {
+    $trail->parent('workflow');
+    $trail->push('Lịch sử tự động hóa', route('admin.workflow.history.index'));
+});

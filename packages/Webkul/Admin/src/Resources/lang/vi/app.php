@@ -11,6 +11,11 @@ return [
         'title' => 'Chat Socials',
     ],
   ],
+  'workflows' => [
+    'index' => [
+        'title' => 'Workflows',
+    ],
+  ],
   'acl' => 
   [
     'leads' => 'Khách hàng tiềm năng',
@@ -1961,6 +1966,33 @@ return [
       'work' => 'Công việc',
     ],
   ],
+  'workflows-automation' => [
+     'index' => 
+      [
+        'title' => 'Khách hàng tiềm năng',
+      ],
+     'dashboard' => 
+      [
+        'title' => 'Bảng điều khiển tự động hóa quy trình làm việc',
+      ],
+     'automation' => 
+      [
+        'title' => 'Tự động hóa quy trình làm việc',
+      ],
+     'connect-key' => 
+      [
+        'title' => 'Kết nối khóa tự động hóa quy trình làm việc',
+      ],
+     'content-library' => 
+      [
+        'title' => 'Thư viện nội dung tự động hóa quy trình làm việc',
+      ],
+     'history' => 
+      [
+        'title' => 'Lịch sử tương tác',
+      ],
+      
+  ],
   'leads' => 
   [
     'create-success' => 'Đã tạo thành công khách hàng tiềm năng.',
@@ -2349,6 +2381,11 @@ return [
   'layouts' => 
   [
     'social-message' => 'Chat Socials',
+    'workflow' => 'Workflow',
+    'history' => 'Lịch sử hoạt động',
+    'dashboard' => 'Trang tổng quan',
+    'connectkey' => 'Kết nối (Keys)',
+    'contentlibrary' => 'Kho nội dung',
     'facebook' => 'Facebook',
     'app-version' => 'Phiên bản: :phiên bản',
     'dashboard' => 'Trang tổng quan',
