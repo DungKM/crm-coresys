@@ -8,17 +8,20 @@ use Webkul\Contact\Models\PersonProxy;
 use Webkul\Lead\Models\LeadProxy;
 use Webkul\Quote\Contracts\Quote as QuoteContract;
 use Webkul\User\Models\UserProxy;
+use Illuminate\Database\Eloquent\Factories\HasFactory; // 1. Thêm dòng này
+use Database\Factories\QuoteFactory; // 2. Import Factory của bạn
 
 class Quote extends Model implements QuoteContract
 {
-    use CustomAttribute;
+    use CustomAttribute, HasFactory;
+
 
     protected $table = 'quotes';
 
     protected $casts = [
-        'billing_address'  => 'array',
+        'billing_address' => 'array',
         'shipping_address' => 'array',
-        'expired_at'       => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     /**
@@ -72,5 +75,10 @@ class Quote extends Model implements QuoteContract
     public function leads()
     {
         return $this->belongsToMany(LeadProxy::modelClass(), 'lead_quotes');
+    }
+
+    protected static function newFactory()
+    {
+        return QuoteFactory::new();
     }
 }
