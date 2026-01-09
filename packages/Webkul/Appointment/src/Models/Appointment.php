@@ -9,6 +9,7 @@ use Webkul\User\Models\User;
 use Webkul\Appointment\Models\AppointmentEmailLog;
 use Webkul\Appointment\Contracts\Appointment as AppointmentContract;
 use Webkul\Contact\Models\Organization;
+use Webkul\Appointment\Models\Service;
 
 class Appointment extends Model implements AppointmentContract
 {
@@ -93,6 +94,10 @@ class Appointment extends Model implements AppointmentContract
         return $this->belongsTo(Organization::class, 'organization_id');
     }
 
+    public function service()
+    {
+        return $this->belongsTo(\Webkul\Appointment\Models\Service::class, 'service_id');
+    }
     /**
      * Get the assigned user (staff)
      *

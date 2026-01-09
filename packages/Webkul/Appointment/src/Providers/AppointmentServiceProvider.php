@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Webkul\Appointment\Models\Appointment;
 use Webkul\Appointment\Contracts\Appointment as AppointmentContract;
+use Webkul\Appointment\Console\Commands\SendAppointmentReminders;
 
 class AppointmentServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,13 @@ class AppointmentServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        if ($this->app->runningInConsole()) {
+        $this->commands([
+            SendAppointmentReminders::class,
+        ]);
+    }
+
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
         $this->loadRoutesFrom(__DIR__ . '/../Routes/appointment-route.php');

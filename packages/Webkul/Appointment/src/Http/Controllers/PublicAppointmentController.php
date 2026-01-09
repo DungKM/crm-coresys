@@ -236,89 +236,89 @@ class PublicAppointmentController extends Controller
      * Process reschedule appointment
      */
     public function reschedule(Request $request, $id, $token)
-{
-    $request->validate([
-        'start_at' => 'required|date|after:now',
-        'reason' => 'nullable|string|max:500',
-    ]);
+    {
+        $request->validate([
+            'start_at' => 'required|date|after:now',
+            'reason' => 'nullable|string|max:500',
+        ]);
 
-    try {
-        $appointment = $this->appointmentRepository->find($id);
+        try {
+            $appointment = $this->appointmentRepository->find($id);
 
-        $emailLog = AppointmentEmailLog::where('appointment_id', $id)
-            ->where('token', $token)
-            ->first();
+            $emailLog = AppointmentEmailLog::where('appointment_id', $id)
+                ->where('token', $token)
+                ->first();
 
-        if (!$appointment || !$emailLog || !$emailLog->validateToken($token)) {
-            return redirect()->back()->with('error', 'Link không hợp lệ.');
+            if (!$appointment || !$emailLog || !$emailLog->validateToken($token)) {
+                return redirect()->back()->with('error', 'Link không hợp lệ.');
+            }
+
+            $emailLog->markAsClicked();
+
+            $oldStartAt = $appointment->start_at;
+            $oldEndAt   = $appointment->end_at;
+
+            $newStartAt = Carbon::parse($request->start_at, $appointment->timezone);
+            $newEndAt   = $newStartAt->copy()->addMinutes($appointment->duration_minutes);
+
+            // --- Kiểm tra conflict giống BaseAppointmentController ---
+            $assignedUserId = $appointment->assigned_user_id;
+            if ($assignedUserId && $this->checkScheduleConflict($assignedUserId, $newStartAt, $newEndAt, $appointment->id)) {
+                return redirect()->back()->with('error', 'Nhân viên đã có lịch hẹn trùng giờ. Vui lòng chọn thời gian khác.');
+            }
+
+            $appointment->update([
+                'start_at' => $newStartAt,
+                'end_at' => $newEndAt,
+                'status' => 'rescheduled',
+                'original_start_at' => $oldStartAt,
+                'reschedule_reason' => $request->reason,
+                'rescheduled_by' => null,
+                'rescheduled_at' => now(),
+            ]);
+
+            $emailLog->recordAction('rescheduled');
+
+            event(new AppointmentRescheduled(
+                $appointment,
+                $oldStartAt,
+                $oldEndAt,
+                $request->reason
+            ));
+
+            return view('appointment::public.success', [
+                'type' => 'rescheduled',
+                'appointment' => $appointment,
+                'message' => 'Lịch hẹn đã được đổi thành công!'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to reschedule appointment', [
+                'appointment_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->back()->with('error', 'Có lỗi xảy ra.');
         }
-
-        $emailLog->markAsClicked();
-
-        $oldStartAt = $appointment->start_at;
-        $oldEndAt   = $appointment->end_at;
-
-        $newStartAt = Carbon::parse($request->start_at, $appointment->timezone);
-        $newEndAt   = $newStartAt->copy()->addMinutes($appointment->duration_minutes);
-
-        // --- Kiểm tra conflict giống BaseAppointmentController ---
-        $assignedUserId = $appointment->assigned_user_id;
-        if ($assignedUserId && $this->checkScheduleConflict($assignedUserId, $newStartAt, $newEndAt, $appointment->id)) {
-            return redirect()->back()->with('error', 'Nhân viên đã có lịch hẹn trùng giờ. Vui lòng chọn thời gian khác.');
-        }
-
-        $appointment->update([
-            'start_at' => $newStartAt,
-            'end_at' => $newEndAt,
-            'status' => 'rescheduled',
-            'original_start_at' => $oldStartAt,
-            'reschedule_reason' => $request->reason,
-            'rescheduled_by' => null,
-            'rescheduled_at' => now(),
-        ]);
-
-        $emailLog->recordAction('rescheduled');
-
-        event(new AppointmentRescheduled(
-            $appointment,
-            $oldStartAt,
-            $oldEndAt,
-            $request->reason
-        ));
-
-        return view('appointment::public.success', [
-            'type' => 'rescheduled',
-            'appointment' => $appointment,
-            'message' => 'Lịch hẹn đã được đổi thành công!'
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Failed to reschedule appointment', [
-            'appointment_id' => $id,
-            'error' => $e->getMessage()
-        ]);
-
-        return redirect()->back()->with('error', 'Có lỗi xảy ra.');
     }
-}
 
 /**
  * Chuyển logic check conflict từ BaseAppointmentController
  */
-protected function checkScheduleConflict($userId, $startAt, $endAt, ?int $excludeAppointmentId = null): bool
-{
-    return $this->appointmentRepository->getModel()->newQuery()
-        ->where('assigned_user_id', $userId)
-        ->whereIn('status', ['scheduled', 'confirmed', 'rescheduled'])
-        ->when($excludeAppointmentId, function ($q) use ($excludeAppointmentId) {
-            $q->where('id', '!=', $excludeAppointmentId);
-        })
-        ->where(function($q) use ($startAt, $endAt) {
-            $q->where('start_at', '<', $endAt)
-              ->where('end_at', '>', $startAt);
-        })
-        ->exists();
-}
+    protected function checkScheduleConflict($userId, $startAt, $endAt, ?int $excludeAppointmentId = null): bool
+    {
+        return $this->appointmentRepository->getModel()->newQuery()
+            ->where('assigned_user_id', $userId)
+            ->whereIn('status', ['scheduled', 'confirmed', 'rescheduled'])
+            ->when($excludeAppointmentId, function ($q) use ($excludeAppointmentId) {
+                $q->where('id', '!=', $excludeAppointmentId);
+            })
+            ->where(function($q) use ($startAt, $endAt) {
+                $q->where('start_at', '<', $endAt)
+                ->where('end_at', '>', $startAt);
+            })
+            ->exists();
+    }
     /**
      * Download ICS calendar file
      */
