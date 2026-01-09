@@ -12,10 +12,11 @@ use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Tag\Models\TagProxy;
 use Webkul\Warehouse\Models\LocationProxy;
 use Webkul\Warehouse\Models\WarehouseProxy;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Database\Factories\ProductFactory;
 class Product extends Model implements ProductContract
 {
-    use CustomAttribute, LogsActivity;
+    use CustomAttribute, LogsActivity, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -68,5 +69,9 @@ class Product extends Model implements ProductContract
     public function activities()
     {
         return $this->belongsToMany(ActivityProxy::modelClass(), 'product_activities');
+    }
+    protected static function newFactory()
+    {
+        return ProductFactory::new();
     }
 }

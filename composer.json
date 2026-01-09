@@ -77,8 +77,8 @@
             "Webkul\\Warehouse\\": "packages/Webkul/Warehouse/src",
             "Webkul\\WebForm\\": "packages/Webkul/WebForm/src",
             "Webkul\\Automation\\": "packages/Webkul/Automation/src",
-            "Webkul\\Facebook\\": "packages/Webkul/Facebook/src",
-            "Webkul\\Instagram\\": "packages/Webkul/Instagram/src"
+            "Webkul\\Instagram\\": "packages/Webkul/Instagram/src",
+            "Webkul\\Appointment\\": "packages/Webkul/Appointment/src"
         }
     },
     "autoload-dev": {
