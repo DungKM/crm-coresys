@@ -347,7 +347,7 @@ abstract class BaseAppointmentController extends Controller
     {
         $leadSourceId = $this->getValidLeadSourceId($request->input('source'));
 
-        // ✅ Extract name từ JSON hoặc dùng string trực tiếp
+        // Extract name từ JSON hoặc dùng string trực tiếp
         $personName = isset($person->name) ? $person->name : '';
 
         return $this->leadRepository->create([
@@ -403,16 +403,17 @@ abstract class BaseAppointmentController extends Controller
             $serviceName = $product ? $product->name : null;
         }
 
-        $customerName = $this->extractValue($lead->person->name ?? '') ?: $lead->title;
-        $customerEmail = $this->extractValue($lead->person->emails ?? '');
-        $customerPhone = $this->extractValue($lead->person->contact_numbers ?? '');
+        // Null-safe: nếu $lead null thì dùng fallback
+        $customerName = $lead?->person?->name ?: $lead?->title ?: $request->customer_name;
+        $customerEmail = $lead?->person?->emails ?: $request->customer_email;
+        $customerPhone = $lead?->person?->contact_numbers ?: $request->customer_phone;
 
         return [
-            'lead_id' => $lead->id,
+            'lead_id' => $lead?->id,
             'customer_name' => $customerName,
-            'customer_phone' => $customerPhone,
-            'customer_email' => $customerEmail,
-            'source' => $lead->lead_source_id,
+            'customer_phone' => $customerPhone[0]['value'] ?? null,
+            'customer_email' => $customerEmail[0]['value'] ?? null,
+            'source' => $lead?->lead_source_id,
             'requested_at' => $timeData['requested_at'] ?? now(),
             'start_at' => $timeData['start_at'],
             'end_at' => $timeData['end_at'],
@@ -435,6 +436,13 @@ abstract class BaseAppointmentController extends Controller
             'channel' => $request->input('channel', 'manual'),
             'status' => 'scheduled',
             'note' => $request->note,
+            'reschedule_reason' => $request->input('reschedule_reason'),
+            'rescheduled_by' => null,
+            'rescheduled_at' => null,
+            'original_start_at' => null,
+             'cancellation_reason' => $request->input('cancellation_reason'),
+            'cancelled_by' => null,
+            'cancelled_at' => null,
             'external_source' => $request->external_source,
             'external_id' => $request->external_id,
             'utm_params' => $request->filled('utm_source')
@@ -563,41 +571,43 @@ abstract class BaseAppointmentController extends Controller
             'appointment_id' => $appointment->id,
             'lead_id' => $appointment->lead_id,
             'customer' => [
-                'name' => $appointment->customer_name,
-                'phone' => $appointment->customer_phone,
-                'email' => $appointment->customer_email,
+                'name' => $appointment->customer_name ?? null,
+                'phone' => $appointment->customer_phone ?? null,
+                'email' => $appointment->customer_email ?? null,
             ],
             'schedule' => [
-                'start_at' => $appointment->start_at->toIso8601String(),
-                'end_at' => $appointment->end_at->toIso8601String(),
-                'timezone' => $appointment->timezone,
-                'duration_minutes' => $appointment->duration_minutes,
+                'start_at' => $appointment->start_at?->toIso8601String(),
+                'end_at' => $appointment->end_at?->toIso8601String(),
+                'timezone' => $appointment->timezone ?? null,
+                'duration_minutes' => $appointment->duration_minutes ?? null,
             ],
             'meeting' => [
-                'type' => $appointment->meeting_type,
-                'link' => $appointment->meeting_link,
-                'call_phone' => $appointment->call_phone,
+                'type' => $appointment->meeting_type ?? null,
+                'link' => $appointment->meeting_link ?? null,
+                'call_phone' => $appointment->call_phone ?? null,
                 'address' => [
-                    'province' => $appointment->province,
-                    'district' => $appointment->district,
-                    'ward' => $appointment->ward,
-                    'street_address' => $appointment->street_address,
+                    'province' => $appointment->province ?? null,
+                    'district' => $appointment->district ?? null,
+                    'ward' => $appointment->ward ?? null,
+                    'street_address' => $appointment->street_address ?? null,
                 ],
-                'service' => $appointment->service_name,
+                'service' => $appointment->service_name ?? null,
             ],
             'assignment' => [
-                'type' => $appointment->assignment_type,
-                'assigned_user_id' => $appointment->assigned_user_id,
-                'assigned_user_name' => $appointment->assignedUser->name ?? null,
-                'routing_key' => $appointment->routing_key,
-                'resource_id' => $appointment->resource_id,
-                'organization_id' => $appointment->organization_id,
-                'organization_name' => $appointment->organization->name ?? null,
+                'type' => $appointment->assignment_type ?? null,
+                'assigned_user_id' => $appointment->assigned_user_id ?? null,
+                'assigned_user_name' => $appointment->assignedUser?->name ?? null,
+                'routing_key' => $appointment->routing_key ?? null,
+                'resource_id' => $appointment->resource_id ?? null,
+                'organization_id' => $appointment->organization_id ?? null,
+                'organization_name' => $appointment->organization?->name ?? null,
             ],
-            'status' => $appointment->status,
-            'note' => $appointment->note,
-            'channel' => $appointment->channel,
-            'created_at' => $appointment->created_at->toIso8601String(),
+            'lead_title' => $appointment->lead?->title ?? null,
+            'lead_person_name' => $appointment->lead?->person?->name ?? null,
+            'status' => $appointment->status ?? null,
+            'note' => $appointment->note ?? null,
+            'channel' => $appointment->channel ?? null,
+            'created_at' => $appointment->created_at?->toIso8601String(),
             'crm_url' => route('admin.appointments.edit', $appointment->id),
         ];
     }

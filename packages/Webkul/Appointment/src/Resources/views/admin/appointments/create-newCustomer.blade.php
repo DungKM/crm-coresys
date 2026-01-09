@@ -3,13 +3,13 @@
         Tạo Lịch Hẹn Mới
     </x-slot>
 
-    <x-admin::form :action="route('admin.appointments.store')" method="POST" id="appointment-form">
+    <x-admin::form :action="route('admin.appointments.store-new')" method="POST" id="appointment-form2">
 
         {{-- Header --}}
         <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 mb-4">
             <div class="flex flex-col gap-2">
                 <div class="text-xl font-bold dark:text-white">
-                    Tạo Lịch Hẹn Mới Cho Khách Hàng Tiềm Năng
+                    Tạo Lịch Hẹn Cho Khách Hàng Mới
                 </div>
             </div>
 
@@ -34,81 +34,61 @@
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {{-- Chọn khách hàng --}}
+                    {{-- Họ và tên --}}
                     <x-admin::form.control-group>
-                        <x-admin::form.control-group.label class="required">
-                            Khách hàng
+                        <x-admin::form.control-group.label>
+                            Họ và tên
                         </x-admin::form.control-group.label>
 
-                        <select
-                            name="lead_id"
-                            id="lead_select"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm
-                                   focus:border-blue-500 focus:ring focus:ring-blue-200
-                                   dark:border-gray-700 dark:bg-gray-900 dark:text-white"
-                            required
-                        >
-                            <option value="">-- Chọn khách hàng --</option>
-                            @php
-                            $toString = function ($value) {
-                                if (is_string($value)) {
-                                    $decoded = json_decode($value, true);
-                                    if (json_last_error() === JSON_ERROR_NONE) {
-                                        $value = $decoded;
-                                    }
-                                }
+                        <x-admin::form.control-group.control
+                            type="text"
+                            name="customer_name"
+                            id="customer_name"
+                            :value="old('customer_name')"
+                            placeholder="Nhập họ tên khách hàng"
+                        />
 
-                                if (is_array($value)) {
-                                    $first = $value[0] ?? null;
-                                    if (is_array($first)) {
-                                        return (string) ($first['value'] ?? $first['email'] ?? '');
-                                    }
-                                    return (string) $first;
-                                }
+                        <x-admin::form.control-group.error control-name="customer_name" />
+                    </x-admin::form.control-group>
 
-                                return is_scalar($value) ? (string) $value : '';
-                            };
-                            @endphp
+                    {{-- Email --}}
+                    <x-admin::form.control-group>
+                        <x-admin::form.control-group.label>
+                            Email
+                        </x-admin::form.control-group.label>
 
-                            @foreach($leads ?? [] as $lead)
-                                @php
-                                    $personName = '';
-                                    if (!empty($lead->person?->name)) {
-                                        $personName = $toString($lead->person->name);
-                                    } elseif (!empty($lead->title)) {
-                                        $personName = $toString($lead->title);
-                                    }
+                        <x-admin::form.control-group.control
+                            type="email"
+                            name="customer_email"
+                            id="customer_email"
+                            :value="old('customer_email')"
+                            placeholder="email@example.com"
+                        />
 
-                                    $email = '';
-                                    if (!empty($lead->person?->emails)) {
-                                        $email = $toString($lead->person->emails);
-                                    }
+                        <x-admin::form.control-group.error control-name="customer_email" />
+                    </x-admin::form.control-group>
 
-                                    $phone = '';
-                                    if (!empty($lead->person?->contact_numbers)) {
-                                        $phone = $toString($lead->person->contact_numbers);
-                                    }
+                    {{-- Số điện thoại --}}
+                    <x-admin::form.control-group>
+                        <x-admin::form.control-group.label>
+                            Số điện thoại
+                        </x-admin::form.control-group.label>
 
-                                    $displayText = trim($personName);
-                                    if ($email !== '') $displayText .= ' - ' . $email;
-                                    if ($phone !== '') $displayText .= ' - ' . $phone;
-                                @endphp
+                        <x-admin::form.control-group.control
+                            type="text"
+                            name="customer_phone"
+                            id="customer_phone"
+                            :value="old('customer_phone')"
+                            placeholder="0912345678"
+                        />
 
-                                <option
-                                    value="{{ $lead->id }}"
-                                    data-name="{{ e($personName) }}"
-                                    data-email="{{ e($email) }}"
-                                    data-phone="{{ e($phone) }}"
-                                >
-                                    {{ $displayText }}
-                                </option>
-                            @endforeach
-                            <option value="new">+ Thêm khách hàng mới</option>
-                        </select>
-
-                        <x-admin::form.control-group.error control-name="lead_id" />
+                        <x-admin::form.control-group.error control-name="customer_phone" />
                     </x-admin::form.control-group>
                 </div>
+
+                <small class="text-gray-500 text-xs mt-2 block">
+                    Các thông tin khách hàng có thể để trống. Nếu không nhập, lịch hẹn sẽ được tạo mà không liên kết với khách hàng cụ thể.
+                </small>
             </div>
 
             {{-- Thông tin lịch hẹn --}}
@@ -520,12 +500,10 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Trigger initial state khi load trang
-    const leadSelect = document.getElementById('lead_select');
     const meetingType = document.getElementById('meeting_type');
     const assignmentType = document.getElementById('assignment_type');
     const channelSelect = document.querySelector('[name="channel"]');
 
-    if (leadSelect) leadSelect.dispatchEvent(new Event('change', { bubbles: true }));
     if (meetingType) meetingType.dispatchEvent(new Event('change', { bubbles: true }));
     if (assignmentType) assignmentType.dispatchEvent(new Event('change', { bubbles: true }));
     if (channelSelect) channelSelect.dispatchEvent(new Event('change', { bubbles: true }));
@@ -535,19 +513,6 @@ document.addEventListener('DOMContentLoaded', function () {
  * EVENT DELEGATION - Xử lý change events
  * =============================== */
 document.addEventListener('change', function (e) {
-
-    /* ===============================
-     * LEAD SELECT - Chọn khách hàng
-     * =============================== */
-    if (e.target && e.target.id === 'lead_select') {
-        const select = e.target;
-
-        // Nếu chọn "Thêm khách hàng mới" thì chuyển trang
-        if (select.value === 'new') {
-            window.location.href = '{{ route("admin.leads.create") }}';
-            return;
-        }
-    }
 
     /* ===============================
      * MEETING TYPE - Loại lịch hẹn
@@ -568,17 +533,17 @@ document.addEventListener('change', function (e) {
 
         // Ẩn tất cả và tắt required
         if (callPhoneGroup) {
-            callPhoneGroup.style.display = 'none';
+            callPhoneGroup.classList.add('hidden');
             if (callPhoneInput) callPhoneInput.required = false;
         }
 
         if (meetingLinkGroup) {
-            meetingLinkGroup.style.display = 'none';
+            meetingLinkGroup.classList.add('hidden');
             if (meetingLinkInput) meetingLinkInput.required = false;
         }
 
         if (onsiteAddressGroup) {
-            onsiteAddressGroup.style.display = 'none';
+            onsiteAddressGroup.classList.add('hidden');
             if (provinceInput) provinceInput.required = false;
             if (districtInput) districtInput.required = false;
             if (wardInput) wardInput.required = false;
@@ -587,15 +552,15 @@ document.addEventListener('change', function (e) {
 
         // Hiện group tương ứng và bật required
         if (meetingType === 'call' && callPhoneGroup) {
-            callPhoneGroup.style.display = 'block';
+            callPhoneGroup.classList.remove('hidden');
             if (callPhoneInput) callPhoneInput.required = true;
         }
         else if (meetingType === 'online' && meetingLinkGroup) {
-            meetingLinkGroup.style.display = 'block';
+            meetingLinkGroup.classList.remove('hidden');
             if (meetingLinkInput) meetingLinkInput.required = true;
         }
         else if (meetingType === 'onsite' && onsiteAddressGroup) {
-            onsiteAddressGroup.style.display = 'grid';
+            onsiteAddressGroup.classList.remove('hidden');
             if (provinceInput) provinceInput.required = true;
             if (districtInput) districtInput.required = true;
             if (wardInput) wardInput.required = true;
@@ -619,31 +584,31 @@ document.addEventListener('change', function (e) {
 
         // Ẩn tất cả và tắt required
         if (directAssignment) {
-            directAssignment.style.display = 'none';
+            directAssignment.classList.add('hidden');
             if (assignedUserId) assignedUserId.required = false;
         }
 
         if (routingAssignment) {
-            routingAssignment.style.display = 'none';
+            routingAssignment.classList.add('hidden');
             if (routingKey) routingKey.required = false;
         }
 
         if (resourceAssignment) {
-            resourceAssignment.style.display = 'none';
+            resourceAssignment.classList.add('hidden');
             if (resourceId) resourceId.required = false;
         }
 
         // Hiện group tương ứng và bật required
         if (assignmentType === 'direct' && directAssignment) {
-            directAssignment.style.display = 'grid';
+            directAssignment.classList.remove('hidden');
             if (assignedUserId) assignedUserId.required = true;
         }
         else if (assignmentType === 'routing' && routingAssignment) {
-            routingAssignment.style.display = 'grid';
+            routingAssignment.classList.remove('hidden');
             if (routingKey) routingKey.required = true;
         }
         else if (assignmentType === 'resource' && resourceAssignment) {
-            resourceAssignment.style.display = 'grid';
+            resourceAssignment.classList.remove('hidden');
             if (resourceId) resourceId.required = true;
         }
     }
@@ -686,7 +651,7 @@ document.addEventListener('change', function (e) {
  * FORM VALIDATION - Kiểm tra trước khi submit
  * =============================== */
 document.addEventListener('submit', function (e) {
-    if (e.target && e.target.id === 'appointment-form') {
+    if (e.target && e.target.id === 'appointment-form2') {
         const meetingType = document.getElementById('meeting_type');
         const assignmentType = document.getElementById('assignment_type');
         const channel = document.querySelector('[name="channel"]');
@@ -717,87 +682,85 @@ document.addEventListener('submit', function (e) {
         const assignmentTypeValue = assignmentType.value;
 
         // 2. Kiểm tra theo meeting type
-        if (meetingTypeValue === 'call') {
-            const callPhoneInput = document.getElementById('call_phone');
-            if (callPhoneInput && !callPhoneInput.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập số điện thoại liên hệ');
-                callPhoneInput.focus();
-                return false;
-            }
-        }
-        else if (meetingTypeValue === 'online') {
-            const meetingLinkInput = document.getElementById('meeting_link');
-            if (meetingLinkInput && !meetingLinkInput.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập link meeting');
-                meetingLinkInput.focus();
-                return false;
-            }
-        }
-        else if (meetingTypeValue === 'onsite') {
-            const provinceInput = document.getElementById('province');
-            const districtInput = document.getElementById('district');
-            const wardInput = document.getElementById('ward');
-            const streetAddressInput = document.getElementById('street_address');
-
-            if (provinceInput && !provinceInput.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập tỉnh/thành phố');
-                provinceInput.focus();
-                return false;
-            }
-            if (districtInput && !districtInput.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập quận/huyện');
-                districtInput.focus();
-                return false;
-            }
-            if (wardInput && !wardInput.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập phường/xã');
-                wardInput.focus();
-                return false;
-            }
-            if (streetAddressInput && !streetAddressInput.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập địa chỉ cụ thể');
-                streetAddressInput.focus();
-                return false;
-            }
-        }
-
-        // 3. Kiểm tra assignment type
-        if (assignmentTypeValue === 'direct') {
-            const assignedUserId = document.getElementById('assigned_user_id');
-            if (assignedUserId && !assignedUserId.value) {
-                e.preventDefault();
-                alert('Vui lòng chọn nhân viên phụ trách');
-                assignedUserId.focus();
-                return false;
-            }
-        }
-        else if (assignmentTypeValue === 'routing') {
-            const routingKey = document.getElementById('routing_key');
-            if (routingKey && !routingKey.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập routing key');
-                routingKey.focus();
-                return false;
-            }
-        }
-        else if (assignmentTypeValue === 'resource') {
-            const resourceId = document.getElementById('resource_id');
-            if (resourceId && !resourceId.value.trim()) {
-                e.preventDefault();
-                alert('Vui lòng nhập resource ID');
-                resourceId.focus();
-                return false;
-            }
+        if(meetingTypeValue === 'call') {
+        const callPhoneInput = document.getElementById('call_phone');
+        if (callPhoneInput && !callPhoneInput.value.trim()) {
+        e.preventDefault();
+        alert('Vui lòng nhập số điện thoại liên hệ');
+        callPhoneInput.focus();
+        return false;
         }
     }
+else if (meetingTypeValue === 'online') {
+        const meetingLinkInput = document.getElementById('meeting_link');
+        if (meetingLinkInput && !meetingLinkInput.value.trim()) {
+        e.preventDefault();
+        alert('Vui lòng nhập link meeting');
+        meetingLinkInput.focus();
+        return false;
+        }
+    }
+else if (meetingTypeValue === 'onsite') {
+        const provinceInput = document.getElementById('province');
+        const districtInput = document.getElementById('district');
+        const wardInput = document.getElementById('ward');
+        const streetAddressInput = document.getElementById('street_address');
+         if (provinceInput && !provinceInput.value.trim()) {
+            e.preventDefault();
+            alert('Vui lòng nhập tỉnh/thành phố');
+            provinceInput.focus();
+            return false;
+        }
+        if (districtInput && !districtInput.value.trim()) {
+            e.preventDefault();
+            alert('Vui lòng nhập quận/huyện');
+            districtInput.focus();
+            return false;
+        }
+        if (wardInput && !wardInput.value.trim()) {
+            e.preventDefault();
+            alert('Vui lòng nhập phường/xã');
+            wardInput.focus();
+            return false;
+        }
+        if (streetAddressInput && !streetAddressInput.value.trim()) {
+            e.preventDefault();
+            alert('Vui lòng nhập địa chỉ cụ thể');
+            streetAddressInput.focus();
+            return false;
+        }
+    }
+
+    // 3. Kiểm tra assignment type
+    if (assignmentTypeValue === 'direct') {
+        const assignedUserId = document.getElementById('assigned_user_id');
+        if (assignedUserId && !assignedUserId.value) {
+            e.preventDefault();
+            alert('Vui lòng chọn nhân viên phụ trách');
+            assignedUserId.focus();
+            return false;
+        }
+    }
+    else if (assignmentTypeValue === 'routing') {
+        const routingKey = document.getElementById('routing_key');
+        if (routingKey && !routingKey.value.trim()) {
+            e.preventDefault();
+            alert('Vui lòng nhập routing key');
+            routingKey.focus();
+            return false;
+        }
+    }
+    else if (assignmentTypeValue === 'resource') {
+        const resourceId = document.getElementById('resource_id');
+        if (resourceId && !resourceId.value.trim()) {
+            e.preventDefault();
+            alert('Vui lòng nhập resource ID');
+            resourceId.focus();
+            return false;
+        }
+    }
+}
 });
 </script>
 @endpush
-
 </x-admin::layouts>
