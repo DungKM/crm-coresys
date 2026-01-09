@@ -31,7 +31,8 @@
                     <!-- Stage Cards -->
                     <div
                         class="flex min-w-[275px] max-w-[275px] flex-col gap-1 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
-                        v-for="(stage, index) in stageLeads"
+                        v-for="stage in activeStages"
+                        :key="stage.id"
                     >
                         {!! view_render_event('admin.leads.index.kanban.content.stage.header.before') !!}
 
@@ -357,13 +358,19 @@
                  * @return {number} The total amount of leads.
                  */
                 totalStagesAmount() {
-                    let totalAmount = 0;
+                    return this.activeStages.reduce(
+                        (sum, stage) => sum + parseFloat(stage.lead_value),
+                        0
+                    );
+                },
 
-                    for (let [key, stage] of Object.entries(this.stageLeads)) {
-                        totalAmount += parseFloat(stage.lead_value);
-                    }
-
-                    return totalAmount;
+                /**
+                * Chỉ lấy các stage chưa kết thúc (chưa Won / Lost)
+                */
+                activeStages() {
+                    return Object.values(this.stageLeads).filter(stage =>
+                        !['won', 'lost'].includes(stage.code)
+                    );
                 }
             },
 

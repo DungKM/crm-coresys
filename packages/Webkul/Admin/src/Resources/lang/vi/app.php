@@ -2037,6 +2037,7 @@ return [
         'delete' => 'Xóa bỏ',
         'mass-delete' => 'Xóa hàng loạt',
         'mass-update' => 'Cập nhật hàng loạt',
+        'mass-change-sales' => 'Cập nhật nhân viên bán hàng hàng loạt',
       ],
       'kanban' => 
       [

@@ -1778,6 +1778,7 @@ return [
                 'delete'         => 'Excluir',
                 'mass-delete'    => 'Excluir em Massa',
                 'mass-update'    => 'Atualizar em Massa',
+                'mass-change-sales' => 'Atualizar Vendedor em Massa',
             ],
             'kanban' => [
                 'rotten-days'            => 'Negócio estagnado por :days dias',

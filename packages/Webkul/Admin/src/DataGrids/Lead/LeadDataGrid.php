@@ -84,6 +84,18 @@ class LeadDataGrid extends DataGrid
             $queryBuilder->whereIn('leads.user_id', $userIds);
         }
 
+        if (config('leads.default_filters.only_new')) {
+            $queryBuilder->whereNotIn(
+                'lead_pipeline_stages.code',
+                config('leads.default_filters.exclude_stages')
+            );
+
+            if (config('leads.default_filters.use_processed_at')) {
+                $queryBuilder->whereNull('leads.processed_at');
+            }
+        }
+
+
         if (! is_null(request()->input('rotten_lead.in'))) {
             $queryBuilder->havingRaw($tablePrefix.'rotten_lead = '.request()->input('rotten_lead.in'));
         }
@@ -328,6 +340,16 @@ class LeadDataGrid extends DataGrid
                 'label' => $stage->name,
                 'value' => $stage->id,
             ])->toArray(),
+        ]);
+
+        // ✅ MASS ACTION ĐỔI SALE
+        $this->addMassAction([
+            'title'   => trans('admin::app.leads.index.datagrid.mass-change-sales'),
+            'method'  => 'POST',
+            'url'     => route('admin.leads.mass_change_sales'),
+            'options' => $this->userRepository
+                ->all(['id as value', 'name as label'])
+                ->toArray(),
         ]);
     }
 }
