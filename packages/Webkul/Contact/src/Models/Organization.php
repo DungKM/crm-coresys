@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Traits\CustomAttribute;
 use Webkul\Contact\Contracts\Organization as OrganizationContract;
 use Webkul\User\Models\UserProxy;
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Thêm dòng này
+use Database\Factories\OrganizationFactory; // Import Factory bạn vừa viết
 
 class Organization extends Model implements OrganizationContract
 {
-    use CustomAttribute;
+    use CustomAttribute, HasFactory;
 
     protected $casts = [
         'address' => 'array',
@@ -42,5 +44,9 @@ class Organization extends Model implements OrganizationContract
     public function user()
     {
         return $this->belongsTo(UserProxy::modelClass());
+    }
+    protected static function newFactory()
+    {
+        return OrganizationFactory::new();
     }
 }

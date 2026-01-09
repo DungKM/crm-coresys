@@ -64,6 +64,123 @@
                     ]"
                 />
 
+                {{-- Gender --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Giới tính')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="select"
+                        name="gender"
+                    >
+                        <option value="">@lang('admin::app.contacts.persons.common.select-gender')</option>
+                        <option value="male">@lang('Nam')</option>
+                        <option value="female">@lang('Nữ')</option>
+                        <option value="other">@lang('Khác')</option>
+                    </x-admin::form.control-group.control>
+
+                    <x-admin::form.control-group.error control-name="gender" />
+                </x-admin::form.control-group>
+
+                {{-- Date of Birth --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Ngày sinh')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="date"
+                        name="date_of_birth"
+                    />
+
+                    <x-admin::form.control-group.error control-name="date_of_birth" />
+                </x-admin::form.control-group>
+
+                {{-- Address --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Địa chỉ')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="textarea"
+                        name="address"
+                    />
+
+                    <x-admin::form.control-group.error control-name="address" />
+                </x-admin::form.control-group>
+
+                {{-- Occupation --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Nghề nghiệp')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="text"
+                        name="occupation"
+                    />
+
+                    <x-admin::form.control-group.error control-name="occupation" />
+                </x-admin::form.control-group>
+
+                {{-- Income --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Thu nhập cá nhân')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="text"
+                        name="income"
+                    />
+
+                    <x-admin::form.control-group.error control-name="income" />
+                </x-admin::form.control-group>
+
+                {{-- Hobbies --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Sở thích')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="textarea"
+                        name="hobbies"
+                    />
+
+                    <x-admin::form.control-group.error control-name="hobbies" />
+                </x-admin::form.control-group>
+
+                {{-- Habits and Behaviors --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Thói quen và hành vi')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="textarea"
+                        name="habits_and_behaviors"
+                    />
+
+                    <x-admin::form.control-group.error control-name="habits_and_behaviors" />
+                </x-admin::form.control-group>
+
+                {{-- Needs and Pain Points --}}
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('Nhu cầu và vấn đề')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="textarea"
+                        name="needs_and_pain_points"
+                    />
+
+                    <x-admin::form.control-group.error control-name="needs_and_pain_points" />
+                </x-admin::form.control-group>
+
                 <v-organization></v-organization>
 
                 {!! view_render_event('admin.persons.create.form_controls.after') !!}
