@@ -8,17 +8,16 @@
             "email": "example@webkul.com"
         }
     ],
-    "require": {
-    },
+    "require": {},
     "autoload": {
         "psr-4": {
-            "Webkul\GoogleAds\\Webkul\GoogleAds\\": "src/"
+            "Webkul\\GoogleAds\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Webkul\\Webkul\GoogleAds\\Providers\\Webkul\GoogleAdsServiceProvider"
+                "Webkul\\GoogleAds\\Providers\\GoogleAdsServiceProvider"
             ],
             "aliases": {}
         }
