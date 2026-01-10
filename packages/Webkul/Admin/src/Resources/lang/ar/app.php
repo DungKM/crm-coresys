@@ -1778,6 +1778,7 @@ return [
                 'delete'         => 'حذف',
                 'mass-delete'    => 'حذف جماعي',
                 'mass-update'    => 'تحديث جماعي',
+                'mass-change-sales' => 'تغيير مندوب المبيعات جماعي',
             ],
             'kanban' => [
                 'rotten-days'            => 'العميل الفاسد منذ :days أيام',

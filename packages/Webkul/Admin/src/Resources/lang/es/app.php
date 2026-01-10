@@ -1778,6 +1778,7 @@ return [
                 'delete'         => 'Eliminar',
                 'mass-delete'    => 'Eliminar en Masa',
                 'mass-update'    => 'Actualizar en Masa',
+                'mass-change-sales' => 'Cambiar Vendedor en Masa',
             ],
             'kanban' => [
                 'rotten-days'            => 'El lead está podrido desde hace :days días',

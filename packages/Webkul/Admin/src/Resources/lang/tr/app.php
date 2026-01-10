@@ -1778,6 +1778,7 @@ return [
                 'delete'         => 'Sil',
                 'mass-delete'    => 'Toplu Sil',
                 'mass-update'    => 'Toplu Güncelle',
+                'mass-change-sales' => 'Toplu Satış Elemanı Güncellemesi',
             ],
             'kanban' => [
                 'rotten-days'            => 'Bu müşteri adayı :days gündür çürük',

@@ -34,6 +34,8 @@ Route::controller(LeadController::class)->prefix('leads')->group(function () {
 
     Route::post('mass-destroy', 'massDestroy')->name('admin.leads.mass_delete');
 
+    Route::post('mass-change-sales', 'massChangeSales')->name('admin.leads.mass_change_sales');
+
     Route::get('get/{pipeline_id?}', 'get')->name('admin.leads.get');
 
     Route::delete('product/{lead_id}', 'removeProduct')->name('admin.leads.product.remove');

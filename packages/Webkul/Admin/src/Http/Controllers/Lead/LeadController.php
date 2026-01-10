@@ -79,7 +79,7 @@ class LeadController extends Controller
             'columns'  => $this->getKanbanColumns(),
         ]);
     }
-
+   
     /**
      * Returns a listing of the resource.
      */
@@ -468,7 +468,7 @@ class LeadController extends Controller
 
                 $lead?->update(['lead_pipeline_stage_id' => $massUpdateRequest->input('value')]);
 
-                Event::dispatch('lead.update.before', $lead->id);
+                Event::dispatch('lead.update.after', $lead->id);
             }
 
             return response()->json([
@@ -506,6 +506,44 @@ class LeadController extends Controller
             ]);
         }
     }
+
+    /**
+     * Mass change sales person for specified leads.
+     */
+    public function massChangeSales(MassUpdateRequest $request): JsonResponse
+    {
+        $leadIds = $request->input('indices');
+        $salesId = $request->input('value');
+
+        $leads = $this->leadRepository->findWhereIn('id', $leadIds);
+
+        try {
+            foreach ($leads as $lead) {
+                Event::dispatch('lead.update.before', $lead->id);
+
+                $lead = $this->leadRepository->find($lead->id);
+
+                if ($lead) {
+                    $lead->update([
+                        'user_id' => $salesId, // hoặc user_id
+                    ]);
+                }
+
+                Event::dispatch('lead.update.after', $lead->id);
+            }
+
+            return response()->json([
+                'message' => trans('admin::app.leads.update-success'),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'message' => trans('admin::app.leads.update-failed'),
+            ], 400);
+        }
+    }
+
 
     /**
      * Attach product to lead.

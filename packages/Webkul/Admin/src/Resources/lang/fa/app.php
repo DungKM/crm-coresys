@@ -1778,6 +1778,7 @@ return [
                 'delete'         => 'حذف',
                 'mass-delete'    => 'حذف گروهی',
                 'mass-update'    => 'به‌روزرسانی گروهی',
+                'mass-change-sales' => 'تغییر فروشنده به صورت گروهی',
             ],
             'kanban' => [
                 'rotten-days'            => 'سرنخ برای :days روز خراب شده است',
