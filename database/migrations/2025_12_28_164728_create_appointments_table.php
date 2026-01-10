@@ -18,11 +18,14 @@ return new class extends Migration
                 ->on('leads')
                 ->nullOnDelete();
 
-            // Thông tin cơ bản (lấy từ lead)
+            // Loại khách hàng
+            $table->enum('customer_type', ['lead', 'new'])->default('lead');
+
+            // Thông tin cơ bản (lấy từ lead hoặc nhập tay)
             $table->string('customer_name');
             $table->string('customer_phone', 20)->nullable();
             $table->string('customer_email')->nullable();
-            $table->unsignedInteger('source')->nullable(); // lead_source_id
+            $table->unsignedInteger('source')->nullable();
 
             // Thời điểm khách yêu cầu lịch hẹn
             $table->dateTime('requested_at')->nullable();
@@ -38,19 +41,19 @@ return new class extends Migration
             $table->string('service_name')->nullable();
             $table->unsignedInteger('service_id')->nullable();
 
-            // Địa chỉ gặp trực tiếp (onsite)
+            // Địa chỉ gặp trực tiếp
             $table->string('province')->nullable();
             $table->string('district')->nullable();
             $table->string('ward')->nullable();
             $table->string('street_address')->nullable();
 
-            // Số điện thoại cho call
+            // Call
             $table->string('call_phone', 20)->nullable();
 
-            // Link meeting (online)
+            // Online
             $table->text('meeting_link')->nullable();
 
-            // Địa điểm cũ (để tương thích)
+            // Legacy
             $table->unsignedInteger('location_id')->nullable();
 
             // Trạng thái
@@ -70,7 +73,7 @@ return new class extends Migration
                 ->on('users')
                 ->nullOnDelete();
 
-            // Assignment type
+            // Assignment
             $table->enum('assignment_type', ['direct', 'routing', 'resource'])->default('direct');
 
             // Routing / Resource
@@ -87,13 +90,13 @@ return new class extends Migration
             // Channel
             $table->enum('channel', ['manual', 'web', 'app', 'api'])->default('manual');
 
-            // Lịch sử dời lịch
+            // Reschedule
             $table->dateTime('original_start_at')->nullable();
             $table->text('reschedule_reason')->nullable();
             $table->unsignedInteger('rescheduled_by')->nullable();
             $table->timestamp('rescheduled_at')->nullable();
 
-            // Hủy lịch
+            // Cancel
             $table->text('cancellation_reason')->nullable();
             $table->unsignedInteger('cancelled_by')->nullable();
             $table->timestamp('cancelled_at')->nullable();
@@ -115,6 +118,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // Indexes
+            $table->index('customer_type');
             $table->index(['requested_at']);
             $table->index(['start_at', 'end_at']);
             $table->index('status');

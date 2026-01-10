@@ -16,6 +16,7 @@ use Webkul\Lead\Models\LeadProxy;
 use Webkul\Tag\Models\TagProxy;
 use Webkul\User\Models\UserProxy;
 
+
 class Person extends Model implements PersonContract
 {
     use CustomAttribute, HasFactory, LogsActivity;
@@ -40,7 +41,7 @@ class Person extends Model implements PersonContract
      * @var array
      */
     protected $casts = [
-        'emails'          => 'array',
+        'emails' => 'array',
         'contact_numbers' => 'array',
     ];
 
@@ -57,6 +58,14 @@ class Person extends Model implements PersonContract
         'user_id',
         'organization_id',
         'unique_id',
+        'gender',
+        'address',
+        'hobbies',
+        'date_of_birth',
+        'occupation',
+        'income',
+        'habits_and_behaviors',
+        'needs_and_pain_points',
     ];
 
     /**
@@ -102,7 +111,7 @@ class Person extends Model implements PersonContract
     /**
      * Create a new factory instance for the model.
      */
-    protected static function newFactory(): PersonFactory
+    protected static function newFactory()
     {
         return PersonFactory::new();
     }

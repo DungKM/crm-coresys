@@ -22,6 +22,7 @@ class AppointmentDataGrid extends DataGrid
             ->leftJoin('organizations', 'appointments.organization_id', '=', 'organizations.id')
             ->select(
                 'appointments.id',
+                'appointments.customer_type',
                 'appointments.customer_name',
                 'appointments.customer_phone',
                 'appointments.customer_email',
@@ -56,6 +57,7 @@ class AppointmentDataGrid extends DataGrid
             ->whereNull('appointments.deleted_at');
 
         $this->addFilter('id', 'appointments.id');
+        $this->addFilter('customer_type', 'appointments.customer_type');
         $this->addFilter('customer_name', 'appointments.customer_name');
         $this->addFilter('customer_phone', 'appointments.customer_phone');
         $this->addFilter('customer_email', 'appointments.customer_email');
@@ -83,6 +85,21 @@ class AppointmentDataGrid extends DataGrid
             'sortable'   => true,
         ]);
 
+        $this->addColumn([
+        'index'      => 'customer_type',
+        'label'      => 'Loại khách hàng',
+        'type'       => 'string',
+        'searchable' => false,
+        'filterable' => true,
+        'sortable'   => true,
+        'closure'    => function ($row) {
+            return match ($row->customer_type) {
+                'lead' => '<span class="label label-info">Khách tiềm năng</span>',
+                'new'  => '<span class="label label-success">Khách hàng mới</span>',
+                default => $row->customer_type,
+            };
+        },
+    ]);
         $this->addColumn([
             'index'      => 'customer_name',
             'label'      => 'Tên khách hàng',
@@ -207,7 +224,7 @@ class AppointmentDataGrid extends DataGrid
                 $statuses = [
                     'scheduled'   => '<span class="label label-warning">Chờ xử lý</span>',
                     'confirmed'   => '<span class="label label-success">Đã xác nhận</span>',
-                    'completed'   => '<span class="label label-info">Hoàn thành</span>',
+                    'showed'   => '<span class="label label-info">Hoàn thành</span>',
                     'cancelled'   => '<span class="label label-danger">Đã hủy</span>',
                     'no_show'     => '<span class="label label-secondary">Không đến</span>',
                 ];

@@ -6,22 +6,38 @@
 
 @section('content')
     <p style="font-size: 16px; margin-bottom: 8px;">
-        Xin chào <strong style="color: #0891B2;">{{ $appointment->assignedUser->name ?? 'Nhân viên' }}</strong>,
+        Xin chào <strong style="color: #0891B2;">
+            {{ $appointment->assignedUser->name ?? 'Nhân viên' }}
+        </strong>,
     </p>
 
     <p style="font-size: 14px; color: #64748B; margin-bottom: 24px;">
-        Chúng tôi xin thông báo rằng khách hàng <strong>{{ $appointment->customer_name }}</strong> đã xác nhận lịch hẹn.
+        Chúng tôi xin thông báo rằng khách hàng
+        <strong>{{ $appointment->customer_name }}</strong>
+        đã xác nhận lịch hẹn.
     </p>
 
     <span class="status-badge status-confirmed">Đã xác nhận</span>
 
+    @php
+        // ✅ Lấy tên dịch vụ an toàn
+        $serviceName =
+            $appointment->service->name
+            ?? $appointment->service_name
+            ?? null;
+    @endphp
+
     <!-- Appointment Details Card -->
     <div class="appointment-card">
+
         <!-- Thời gian -->
         <div class="appointment-row">
             <div class="appointment-info">
                 <h4>Thời gian</h4>
-                <p style="color: #10B981;">{{ $appointment->start_at->format('d/m/Y') }} lúc {{ $appointment->start_at->format('H:i') }}</p>
+                <p style="color: #10B981;">
+                    {{ $appointment->start_at->format('d/m/Y') }}
+                    lúc {{ $appointment->start_at->format('H:i') }}
+                </p>
                 <p style="font-size: 13px; color: #64748B; font-weight: normal; margin-top: 4px;">
                     Thời lượng: {{ $appointment->duration_minutes }} phút
                 </p>
@@ -50,17 +66,18 @@
                 <h4>Khách hàng</h4>
                 <p>{{ $appointment->customer_name }}</p>
                 <p style="font-size: 13px; color: #64748B; margin-top: 2px;">
-                    Email: {{ $appointment->customer_email }} | SĐT: {{ $appointment->customer_phone }}
+                    Email: {{ $appointment->customer_email }}
+                    | SĐT: {{ $appointment->customer_phone }}
                 </p>
             </div>
         </div>
 
-        <!-- Dịch vụ -->
-        @if($appointment->service_name)
+        <!-- ✅ Dịch vụ -->
+        @if($serviceName)
         <div class="appointment-row">
             <div class="appointment-info">
                 <h4>Dịch vụ</h4>
-                <p>{{ $appointment->service_name }}</p>
+                <p>{{ $serviceName }}</p>
             </div>
         </div>
         @endif

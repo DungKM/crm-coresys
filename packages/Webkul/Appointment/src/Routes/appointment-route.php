@@ -16,11 +16,17 @@ Route::prefix('admin')
             Route::get('/list', [AppointmentController::class, 'getAppointments'])
                 ->name('admin.appointments.list');
 
-            Route::get('/create', [AppointmentController::class, 'add'])
+            Route::get('/create', [AppointmentController::class, 'createByLead'])
                 ->name('admin.appointments.create');
+
+            Route::get('/create-new', [AppointmentController::class, 'createNew'])
+                ->name('admin.appointments.create-newCustomer');
 
             Route::post('/store', [AppointmentController::class, 'store'])
                 ->name('admin.appointments.store');
+
+            Route::post('/appointments/new-customer', [AppointmentController::class, 'storeNewCustomer'])
+                ->name('admin.appointments.store-new');
 
             Route::get('/edit/{id}', [AppointmentController::class, 'edit'])
                 ->name('admin.appointments.edit');

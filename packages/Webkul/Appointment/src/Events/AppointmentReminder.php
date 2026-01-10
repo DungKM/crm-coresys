@@ -2,20 +2,27 @@
 
 namespace Webkul\Appointment\Events;
 
-use Webkul\Appointment\Models\Appointment;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Webkul\Appointment\Models\Appointment;
 
 class AppointmentReminder
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Appointment $appointment;
-    public int $hoursUntil;
+    public $appointment;
+    public $minutesUntil;
 
-    public function __construct(Appointment $appointment, int $hoursUntil)
+    /**
+     * Create a new event instance.
+     *
+     * @param Appointment $appointment
+     * @param int $minutesUntil Số phút còn lại đến cuộc hẹn
+     */
+    public function __construct(Appointment $appointment, int $minutesUntil)
     {
         $this->appointment = $appointment;
-        $this->hoursUntil  = $hoursUntil;
+        $this->minutesUntil = $minutesUntil;
     }
 }

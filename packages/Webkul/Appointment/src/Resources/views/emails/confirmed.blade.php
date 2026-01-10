@@ -4,9 +4,20 @@
 
 @section('header-title', 'Đã Xác Nhận')
 
+@php
+    // ✅ Lấy tên dịch vụ an toàn (GIỐNG FILE LỊCH HẸN MỚI)
+    $serviceName =
+        $appointment->service->name
+        ?? $appointment->service_name
+        ?? null;
+@endphp
+
 @section('content')
     <p style="font-size: 16px; margin-bottom: 8px;">
-        Xin chào <strong style="color: #0891B2;">{{ $appointment->customer_name }}</strong>,
+        Xin chào
+        <strong style="color: #0891B2;">
+            {{ $appointment->customer_name }}
+        </strong>,
     </p>
 
     <p style="font-size: 14px; color: #64748B; margin-bottom: 24px;">
@@ -17,11 +28,15 @@
 
     <!-- Appointment Details Card -->
     <div class="appointment-card">
+
         <!-- Thời gian -->
         <div class="appointment-row">
             <div class="appointment-info">
                 <h4>Thời gian</h4>
-                <p style="color: #10B981;">{{ $appointment->start_at->format('d/m/Y') }} lúc {{ $appointment->start_at->format('H:i') }}</p>
+                <p style="color: #10B981;">
+                    {{ $appointment->start_at->format('d/m/Y') }}
+                    lúc {{ $appointment->start_at->format('H:i') }}
+                </p>
                 <p style="font-size: 13px; color: #64748B; font-weight: normal; margin-top: 4px;">
                     Thời lượng: {{ $appointment->duration_minutes }} phút
                 </p>
@@ -46,34 +61,41 @@
 
         <!-- Chi tiết theo loại -->
         @if($appointment->meeting_type === 'call' && $appointment->call_phone)
-        <div class="appointment-row">
-            <div class="appointment-info">
-                <h4>Số điện thoại</h4>
-                <p>{{ $appointment->call_phone }}</p>
+            <div class="appointment-row">
+                <div class="appointment-info">
+                    <h4>Số điện thoại</h4>
+                    <p>{{ $appointment->call_phone }}</p>
+                </div>
             </div>
-        </div>
         @elseif($appointment->meeting_type === 'online' && $appointment->meeting_link)
-        <div class="appointment-row">
-            <div class="appointment-info">
-                <h4>Link meeting</h4>
-                <p><a href="{{ $appointment->meeting_link }}" style="color: #10B981; text-decoration: none; font-weight: 600;">{{ $appointment->meeting_link }}</a></p>
+            <div class="appointment-row">
+                <div class="appointment-info">
+                    <h4>Link meeting</h4>
+                    <p>
+                        <a href="{{ $appointment->meeting_link }}"
+                           style="color: #10B981; text-decoration: none; font-weight: 600;">
+                            {{ $appointment->meeting_link }}
+                        </a>
+                    </p>
+                </div>
             </div>
-        </div>
         @elseif($appointment->meeting_type === 'onsite' && $appointment->full_address)
-        <div class="appointment-row">
-            <div class="appointment-info">
-                <h4>Địa điểm</h4>
-                <p style="font-size: 14px;">{{ $appointment->full_address }}</p>
+            <div class="appointment-row">
+                <div class="appointment-info">
+                    <h4>Địa điểm</h4>
+                    <p style="font-size: 14px;">
+                        {{ $appointment->full_address }}
+                    </p>
+                </div>
             </div>
-        </div>
         @endif
 
-        <!-- Dịch vụ -->
-        @if($appointment->service_name)
+        <!-- ✅ DỊCH VỤ (XỬ LÝ GIỐNG FILE LỊCH HẸN MỚI) -->
+        @if($serviceName)
         <div class="appointment-row">
             <div class="appointment-info">
                 <h4>Dịch vụ</h4>
-                <p>{{ $appointment->service_name }}</p>
+                <p>{{ $serviceName }}</p>
             </div>
         </div>
         @endif
@@ -92,7 +114,8 @@
     <!-- Success Message -->
     <div class="alert-box alert-success">
         <p style="font-size: 14px; margin: 0;">
-            <strong>Xác nhận thành công!</strong> Chúng tôi sẽ gửi nhắc nhở trước giờ hẹn. Vui lòng có mặt đúng giờ.
+            <strong>Xác nhận thành công!</strong>
+            Chúng tôi sẽ gửi nhắc nhở trước giờ hẹn. Vui lòng có mặt đúng giờ.
         </p>
     </div>
 
@@ -100,7 +123,8 @@
 
     <p style="font-size: 13px; color: #64748B; text-align: center; line-height: 1.8;">
         Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi qua:<br>
-        <strong>Hotline:</strong> {{ $company['phone'] }} | <strong>Email:</strong> {{ $company['email'] }}
+        <strong>Hotline:</strong> {{ $company['phone'] }}
+        | <strong>Email:</strong> {{ $company['email'] }}
     </p>
 
     <p style="font-size: 12px; color: #94A3B8; text-align: center; margin-top: 24px;">
