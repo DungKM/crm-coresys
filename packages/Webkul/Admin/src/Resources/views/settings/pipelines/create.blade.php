@@ -288,7 +288,7 @@
                         stages: [{
                             'id': 'stage_1',
                             'code': 'new', 
-                            'name': "@lang('admin::app.settings.pipelines.create.new-stage')",
+                            'name': 'New',
                             'probability': 100
                         }, {
                             'id': 'stage_2',
@@ -298,12 +298,12 @@
                         }, {
                             'id': 'stage_99',
                             'code': 'won',
-                            'name': "{{ __('admin::app.settings.pipelines.create.won-stage') }}",
+                            'name': 'Won',
                             'probability': 100
                         }, {
                             'id': 'stage_100',
                             'code': 'lost',
-                            'name': "{{ __('admin::app.settings.pipelines.create.lost-stage') }}",
+                            'name': 'Lost',
                             'probability': 0
                         }],
 
