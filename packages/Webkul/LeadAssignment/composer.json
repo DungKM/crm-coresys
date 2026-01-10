@@ -8,17 +8,16 @@
             "email": "example@webkul.com"
         }
     ],
-    "require": {
-    },
+    "require": {},
     "autoload": {
         "psr-4": {
-            "Webkul\LeadAssignment\\Webkul\LeadAssignment\\": "src/"
+            "Webkul\\LeadAssignment\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Webkul\\Webkul\LeadAssignment\\Providers\\Webkul\LeadAssignmentServiceProvider"
+                "Webkul\\LeadAssignment\\Providers\\LeadAssignmentServiceProvider"
             ],
             "aliases": {}
         }

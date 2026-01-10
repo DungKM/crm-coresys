@@ -7,10 +7,16 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Log;
+use Webkul\GoogleAds\Contracts\GoogleAdsServiceContract;
 
 class GoogleAdsController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function __construct(
+        private GoogleAdsServiceContract $googleAdsService
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -19,7 +25,13 @@ class GoogleAdsController extends Controller
      */
     public function index()
     {
-        return view('googleads::index');
+        // Fetch real campaigns from Google Ads API
+        $result = $this->googleAdsService->getCampaigns();
+
+        $campaigns = $result['campaigns'] ?? [];
+        $error = !$result['success'] ? $result['message'] : null;
+
+        return view('admin::google-ads.index', compact('campaigns', 'error'));
     }
 
     /**
@@ -195,5 +207,15 @@ class GoogleAdsController extends Controller
     public function destroy($id)
     {
 
+    }
+
+    /**
+     * Display campaigns page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function campaigns()
+    {
+        return view('admin::google-ads.index');
     }
 }

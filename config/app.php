@@ -220,7 +220,7 @@ return [
         Webkul\User\Providers\UserServiceProvider::class,
         Webkul\Warehouse\Providers\WarehouseServiceProvider::class,
         Webkul\WebForm\Providers\WebFormServiceProvider::class,
-        Webkul\GoogleAds\Providers\GoogleAdsServiceProvider::class,
+        Webkul\GoogleAds\Providers\AdminServiceProvider::class,
     ])->toArray(),
 
     /*
