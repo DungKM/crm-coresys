@@ -357,60 +357,60 @@
             
             // Hàm kiểm tra tin nhắn mới
             async function checkForNewMessages() {
-                if (isPolling) return;
-                isPolling = true;
+                // if (isPolling) return;
+                // isPolling = true;
                 
-                try {
-                    const response = await fetch('/admin/whatsapp/check-new?last_check=' + encodeURIComponent(lastCheckTime), {
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        }
-                    });
+                // try {
+                //     const response = await fetch('/admin/whatsapp/check-new?last_check=' + encodeURIComponent(lastCheckTime), {
+                //         headers: {
+                //             'Accept': 'application/json',
+                //             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                //         }
+                //     });
                     
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status);
-                    }
+                //     if (!response.ok) {
+                //         throw new Error('HTTP ' + response.status);
+                //     }
                     
-                    const data = await response.json();
+                //     const data = await response.json();
                     
-                    if (data.success && data.has_new && data.count > 0) {
-                        // Filter ra chỉ những tin nhắn CHƯA được thông báo
-                        const newMessages = data.messages.filter(msg => !isAlreadyNotified(msg.id));
+                //     if (data.success && data.has_new && data.count > 0) {
+                //         // Filter ra chỉ những tin nhắn CHƯA được thông báo
+                //         const newMessages = data.messages.filter(msg => !isAlreadyNotified(msg.id));
                         
-                        if (newMessages.length > 0) {
-                            console.log('[Notification] 📩 New messages:', newMessages.length, 'of', data.count, 'total');
+                //         if (newMessages.length > 0) {
+                //             console.log('[Notification] 📩 New messages:', newMessages.length, 'of', data.count, 'total');
                             
-                            // Phát âm thanh (chỉ 1 lần)
-                            playNotificationSound();
+                //             // Phát âm thanh (chỉ 1 lần)
+                //             playNotificationSound();
                             
-                            // Cập nhật unread count và title
-                            unreadCount += newMessages.length;
-                            updateBrowserTitle(unreadCount);
+                //             // Cập nhật unread count và title
+                //             unreadCount += newMessages.length;
+                //             updateBrowserTitle(unreadCount);
                             
-                            // Hiện in-app notification style Zalo cho mỗi tin nhắn MỚI
-                            newMessages.forEach(msg => {
-                                showInAppNotification(
-                                    msg.preview || 'Tin nhắn mới',
-                                    msg.lead_name || 'Khách hàng',
-                                    msg.lead_id
-                                );
-                                // Đánh dấu đã thông báo
-                                addNotifiedId(msg.id);
-                            });
-                        } else {
-                            console.log('[Notification] All messages already notified, skipping');
-                        }
-                    }
+                //             // Hiện in-app notification style Zalo cho mỗi tin nhắn MỚI
+                //             newMessages.forEach(msg => {
+                //                 showInAppNotification(
+                //                     msg.preview || 'Tin nhắn mới',
+                //                     msg.lead_name || 'Khách hàng',
+                //                     msg.lead_id
+                //                 );
+                //                 // Đánh dấu đã thông báo
+                //                 addNotifiedId(msg.id);
+                //             });
+                //         } else {
+                //             console.log('[Notification] All messages already notified, skipping');
+                //         }
+                //     }
                     
-                    if (data.server_time) {
-                        lastCheckTime = data.server_time;
-                    }
-                } catch (e) {
-                    console.log('[Notification] ⚠️ Error:', e.message);
-                } finally {
-                    isPolling = false;
-                }
+                //     if (data.server_time) {
+                //         lastCheckTime = data.server_time;
+                //     }
+                // } catch (e) {
+                //     console.log('[Notification] ⚠️ Error:', e.message);
+                // } finally {
+                //     isPolling = false;
+                // }
             }
             
             // Reset unread count khi user focus vào tab
