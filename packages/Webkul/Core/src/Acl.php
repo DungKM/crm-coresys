@@ -88,10 +88,8 @@ class Acl
         }
 
         $acl = Arr::undot(Arr::dot($aclWithDotNotation));
-
         foreach ($acl as $aclItemKey => $aclItem) {
             $subAclItems = $this->processSubAclItems($aclItem);
-
             $this->addItem(new AclItem(
                 key: $aclItemKey,
                 name: trans($aclItem['name']),
@@ -108,17 +106,18 @@ class Acl
     private function processSubAclItems($aclItem): Collection
     {
         return collect($aclItem)
+            ->filter(function ($value) {
+                return is_array($value)
+                    && isset($value['key'], $value['name'], $value['route'], $value['sort']);
+            })
             ->sortBy('sort')
-            ->filter(fn ($value, $key) => is_array($value) && $key !== 'route')
             ->map(function ($subAclItem) {
-                $subSubAclItems = $this->processSubAclItems($subAclItem);
-
                 return new AclItem(
                     key: $subAclItem['key'],
                     name: trans($subAclItem['name']),
                     route: $subAclItem['route'],
                     sort: $subAclItem['sort'],
-                    children: $subSubAclItems,
+                    children: $this->processSubAclItems($subAclItem),
                 );
             });
     }
