@@ -49,10 +49,7 @@ class AppointmentController extends BaseAppointmentController
         return response()->json(['data' => $appointments]);
     }
 
-    /**
-     * Show form tạo lịch hẹn
-     */
-    public function add()
+    public function createByLead()
     {
         $leads = $this->leadRepository->with(['person'])->get();
         $users = app(\Webkul\User\Repositories\UserRepository::class)->all();
@@ -75,27 +72,204 @@ class AppointmentController extends BaseAppointmentController
     }
 
     /**
+     * Tạo lịch hẹn cho KHÁCH HÀNG MỚI
+     */
+    public function createNew()
+    {
+        $users = app(\Webkul\User\Repositories\UserRepository::class)->all();
+        $sources = $this->sourceRepository->all();
+        $products = $this->productRepository->all();
+        $timezones = $this->getAvailableTimezones();
+
+        $organizations = DB::table('organizations')
+            ->select('id', 'name', 'address')
+            ->get();
+
+        $customerType = 'new';
+
+        return view('appointment::admin.appointments.create-newCustomer', compact(
+            'users',
+            'sources',
+            'products',
+            'timezones',
+            'organizations',
+            'customerType'
+        ));
+    }
+
+    /**
      * Store appointment
      */
      public function store(Request $request)
+{
+    Log::info('Store appointment started', ['request' => $request->all()]);
+
+    // Tạo start_at từ date + time nếu có
+    if ($request->filled('appointment_date') && $request->filled('start_time')) {
+        $request->merge([
+            'start_at' => $request->appointment_date . ' ' . $request->start_time . ':00'
+        ]);
+        Log::info('Merged start_at', ['start_at' => $request->start_at]);
+    }
+
+    // Validate input
+    $validator = $this->validateRequest($request);
+    if ($validator->fails()) {
+        Log::warning('Validation failed', ['errors' => $validator->errors()->toArray()]);
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+    }
+    Log::info('Validation passed');
+
+    DB::beginTransaction();
+
+    try {
+        // Idempotency check
+        if ($request->filled('external_id') && $request->filled('external_source')) {
+            Log::info('Checking idempotency', [
+                'external_source' => $request->external_source,
+                'external_id' => $request->external_id
+            ]);
+
+            $existing = $this->checkIdempotency($request->external_source, $request->external_id);
+
+            if ($existing) {
+                DB::commit();
+                Log::info('Appointment already exists', ['appointment_id' => $existing->id]);
+
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Lịch hẹn đã tồn tại',
+                        'data' => $this->formatAppointmentResponse($existing)
+                    ]);
+                }
+
+                return redirect()->route('admin.appointments.index')
+                    ->with('success', 'Lịch hẹn đã tồn tại');
+            }
+        }
+
+        // Xử lý thời gian
+        $timeData = $this->processDateTime($request);
+        Log::info('Processed datetime', ['timeData' => $timeData]);
+
+        // Validate điều kiện lịch hẹn
+        $validationResult = $this->validateAppointmentConditions($timeData, $request);
+        if (!$validationResult['success']) {
+            DB::rollBack();
+            Log::warning('Appointment conditions validation failed', ['validationResult' => $validationResult]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validationResult['message'],
+                    'error_code' => $validationResult['code']
+                ], $validationResult['http_code']);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $validationResult['message']);
+        }
+
+        // Tìm hoặc tạo lead
+        $lead = $this->findOrCreateLead($request);
+        Log::info('Lead found or created', ['lead_id' => $lead?->id]);
+
+        if (!$lead) {
+            throw new \Exception('Không thể tạo hoặc tìm thấy khách hàng');
+        }
+
+        // Chuẩn bị dữ liệu appointment
+        $appointmentData = $this->prepareAppointmentData($request, $timeData, $lead);
+        Log::info('Prepared appointment data', ['appointmentData' => $appointmentData]);
+
+        // Tạo appointment
+        $appointment = $this->appointmentRepository->create($appointmentData);
+        Log::info('Appointment created', ['appointment_id' => $appointment->id]);
+
+        // Phân công nhân viên
+        $assignedUserId = $this->handleAssignment($request, $lead, $appointment);
+        Log::info('Assignment result', ['assigned_user_id' => $assignedUserId]);
+
+        if ($assignedUserId) {
+            $appointment->assigned_user_id = $assignedUserId;
+            $appointment->save();
+            Log::info('Assigned user saved to appointment', ['appointment_id' => $appointment->id]);
+        }
+
+        // Refresh relationships
+        $appointment->load(['lead.person', 'assignedUser']);
+        Log::info('Loaded appointment relationships', [
+            'lead' => $appointment->lead?->person,
+            'assignedUser' => $appointment->assignedUser
+        ]);
+
+        // Dispatch event
+        event(new \Webkul\Appointment\Events\AppointmentCreated($appointment));
+        Log::info('AppointmentCreated event dispatched', ['appointment_id' => $appointment->id]);
+
+        DB::commit();
+        Log::info('Transaction committed');
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo lịch hẹn thành công',
+                'data' => $this->formatAppointmentResponse($appointment)
+            ], 201);
+        }
+
+        return response()->view('appointment::admin.appointments.alert-redirect', [
+            'message' => 'Đặt lịch thành công, email xác nhận đang được gửi tới bạn.'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Appointment creation error', [
+            'message' => $e->getMessage(),
+            'request' => $request->all(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Lỗi hệ thống: ' . $e->getMessage());
+    }
+}
+
+
+
+    public function storeNewCustomer(Request $request)
     {
+        // Tạo start_at từ date + time nếu có
         if ($request->filled('appointment_date') && $request->filled('start_time')) {
             $request->merge([
                 'start_at' => $request->appointment_date . ' ' . $request->start_time . ':00'
             ]);
         }
 
-        $validator = $this->validateRequest($request);
+        // Validate input khách hàng mới
+        $validator = $this->validateNewCustomerRequest($request);
 
         if ($validator->fails()) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -104,6 +278,7 @@ class AppointmentController extends BaseAppointmentController
         DB::beginTransaction();
 
         try {
+            // Idempotency check
             if ($request->filled('external_id') && $request->filled('external_source')) {
                 $existing = $this->checkIdempotency(
                     $request->external_source,
@@ -112,92 +287,169 @@ class AppointmentController extends BaseAppointmentController
 
                 if ($existing) {
                     DB::commit();
-
-                    if ($request->ajax()) {
-                        return response()->json([
-                            'success' => true,
-                            'message' => 'Lịch hẹn đã tồn tại',
-                            'data' => $this->formatAppointmentResponse($existing)
-                        ]);
-                    }
-
                     return redirect()->route('admin.appointments.index')
                         ->with('success', 'Lịch hẹn đã tồn tại');
                 }
             }
 
             $timeData = $this->processDateTime($request);
-            $validationResult = $this->validateAppointmentConditions($timeData, $request);
 
+            $validationResult = $this->validateAppointmentConditions($timeData, $request);
             if (!$validationResult['success']) {
                 DB::rollBack();
-
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => $validationResult['message'],
-                        'error_code' => $validationResult['code']
-                    ], $validationResult['http_code']);
-                }
-
                 return redirect()->back()
                     ->withInput()
                     ->with('error', $validationResult['message']);
             }
 
-            $lead = $this->findOrCreateLead($request);
-
-            if (!$lead) {
-                throw new \Exception('Không thể tạo hoặc tìm thấy khách hàng');
-            }
+            // Lead = null vì khách hàng mới
+            $lead = null;
 
             $appointmentData = $this->prepareAppointmentData($request, $timeData, $lead);
+            $appointmentData['status'] = $request->input('status', 'confirmed');
+
             $appointment = $this->appointmentRepository->create($appointmentData);
 
-            $assignedUserId = $this->handleAssignment($request, $lead, $appointment);
-
+            $assignedUserId = $this->handleAssignment($request, null, $appointment);
             if ($assignedUserId) {
                 $appointment->assigned_user_id = $assignedUserId;
                 $appointment->save();
             }
 
-            // ✅ Refresh appointment để load relationships trước khi dispatch event
             $appointment->load(['lead.person', 'assignedUser']);
 
-            // ✅ Dispatch event - email sẽ được gửi từ listener
             event(new \Webkul\Appointment\Events\AppointmentCreated($appointment));
 
             DB::commit();
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Tạo lịch hẹn thành công',
-                    'data' => $this->formatAppointmentResponse($appointment)
-                ], 201);
-            }
-
-            return redirect()->route('admin.appointments.index')
-                ->with('success', 'Tạo lịch hẹn thành công');
+            return response()->view('appointment::admin.appointments.alert-redirect', [
+                'message' => 'Đặt lịch thành công, email xác nhận đang được gửi tới bạn.'
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
 
+            Log::error('Appointment creation error (new customer): ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Lỗi hệ thống: ' . $e->getMessage());
+        }
+    }
+
+
+    protected function validateNewCustomerRequest(Request $request)
+    {
+        $rules = [
+            'customer_name' => 'required|string|max:255',
+
+            'customer_email' => 'nullable|email|max:255',
+            'customer_phone' => 'nullable|string|max:20',
+
+            'start_at' => 'required|date|after:now',
+            'duration_minutes' => 'required|integer|min:15|max:480',
+            'meeting_type' => 'required|in:call,onsite,online',
+
+            'call_phone' => 'required_if:meeting_type,call|nullable|string|max:20',
+            'meeting_link' => 'required_if:meeting_type,online|nullable|url|max:500',
+
+            'province' => 'required_if:meeting_type,onsite|nullable|string|max:100',
+            'district' => 'required_if:meeting_type,onsite|nullable|string|max:100',
+            'ward' => 'required_if:meeting_type,onsite|nullable|string|max:100',
+            'street_address' => 'required_if:meeting_type,onsite|nullable|string|max:255',
+
+            'assignment_type' => 'required|in:direct,routing,resource',
+            'assigned_user_id' => 'required_if:assignment_type,direct|nullable|exists:users,id',
+        ];
+
+        return Validator::make($request->all(), $rules);
+    }
+
+    protected function handleStoreAppointment(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Idempotency check
+            if ($request->filled('external_id') && $request->filled('external_source')) {
+                $existing = $this->checkIdempotency(
+                    $request->external_source,
+                    $request->external_id
+                );
+
+                if ($existing) {
+                    DB::commit();
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Lịch hẹn đã tồn tại',
+                        'data' => $this->formatAppointmentResponse($existing)
+                    ]);
+                }
+            }
+
+            $timeData = $this->processDateTime($request);
+
+            // Kiểm tra điều kiện lịch hẹn
+            $validationResult = $this->validateAppointmentConditions($timeData, $request);
+            if (!$validationResult['success']) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => $validationResult['message']
+                ], $validationResult['http_code']);
+            }
+
+            // Chuẩn bị dữ liệu appointment
+            $appointmentData = $this->prepareAppointmentData($request, $timeData, null);
+
+            // ✅ Mặc định status đã được set từ storeNewCustomer là confirmed
+            // Nếu bạn muốn override status ở đây cũng được:
+            $appointmentData['status'] = $request->input('status', 'scheduled');
+
+            // Tạo appointment
+            $appointment = $this->appointmentRepository->create($appointmentData);
+
+            // Xử lý phân công nhân viên
+            $assignedUserId = $this->handleAssignment($request, null, $appointment);
+            if ($assignedUserId) {
+                $appointment->assigned_user_id = $assignedUserId;
+                $appointment->save();
+            }
+
+            $appointment->load(['lead.person', 'assignedUser']);
+
+            Log::info('New appointment created (storeNewCustomer)', [
+            'appointment_id' => $appointment->id,
+            'lead_id' => $appointment->lead?->id,
+            'lead_title' => $appointment->lead?->title ?? null,
+            'lead_person_name' => $appointment->lead?->person?->name ?? null,
+            'assigned_user_id' => $appointment->assigned_user_id,
+        ]);
+
+            event(new \Webkul\Appointment\Events\AppointmentCreated($appointment));
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo lịch hẹn thành công',
+                'data' => $this->formatAppointmentResponse($appointment)
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Appointment creation error: ' . $e->getMessage(), [
                 'request' => $request->all(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Lỗi hệ thống: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Lỗi hệ thống: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -238,158 +490,148 @@ class AppointmentController extends BaseAppointmentController
     /**
      * Update appointment
      */
-     public function update(Request $request, int $id)
-        {
-            $appointment = $this->appointmentRepository->findOrFail($id);
+    public function update(Request $request, int $id)
+    {
+        $appointment = $this->appointmentRepository->findOrFail($id);
 
-            if (!$appointment->canEdit()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không thể sửa lịch hẹn ở trạng thái: ' . $appointment->status
-                ], 422);
-            }
-
-            $validator = $this->validateUpdateRequest($request);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            DB::beginTransaction();
-
-            try {
-                $timeData = $this->processDateTime($request);
-
-                // ✅ CHỈ LẤY CÁC FIELD CÓ TRONG REQUEST
-                $appointmentData = [];
-
-                // Thông tin thời gian
-                if ($request->filled('start_at')) {
-                    $appointmentData['start_at'] = $timeData['start_at'];
-                }
-                if ($request->filled('end_at') || $request->filled('duration_minutes')) {
-                    $appointmentData['end_at'] = $timeData['end_at'];
-                }
-                if ($request->filled('duration_minutes')) {
-                    $appointmentData['duration_minutes'] = $request->duration_minutes;
-                }
-
-                // Thông tin lịch hẹn
-                if ($request->filled('meeting_type')) {
-                    $appointmentData['meeting_type'] = $request->meeting_type;
-
-                    // Reset fields không liên quan
-                    if ($request->meeting_type !== 'call') {
-                        $appointmentData['call_phone'] = null;
-                    }
-                    if ($request->meeting_type !== 'online') {
-                        $appointmentData['meeting_link'] = null;
-                    }
-                    if ($request->meeting_type !== 'onsite') {
-                        $appointmentData['province'] = null;
-                        $appointmentData['district'] = null;
-                        $appointmentData['ward'] = null;
-                        $appointmentData['street_address'] = null;
-                    }
-                }
-
-                if ($request->filled('call_phone')) {
-                    $appointmentData['call_phone'] = $request->call_phone;
-                }
-                if ($request->filled('meeting_link')) {
-                    $appointmentData['meeting_link'] = $request->meeting_link;
-                }
-                if ($request->filled('province')) {
-                    $appointmentData['province'] = $request->province;
-                }
-                if ($request->filled('district')) {
-                    $appointmentData['district'] = $request->district;
-                }
-                if ($request->filled('ward')) {
-                    $appointmentData['ward'] = $request->ward;
-                }
-                if ($request->filled('street_address')) {
-                    $appointmentData['street_address'] = $request->street_address;
-                }
-
-                // Thông tin dịch vụ
-                if ($request->filled('service_id')) {
-                    $appointmentData['service_id'] = $request->service_id;
-                }
-
-                // Ghi chú
-                if ($request->has('note')) {
-                    $appointmentData['note'] = $request->note;
-                }
-
-                $oldStartAt = $appointment->start_at;
-                $oldEndAt = $appointment->end_at;
-
-                $isTimeChanged = isset($appointmentData['start_at']) &&
-                                ($oldStartAt->ne($appointmentData['start_at']) ||
-                                (isset($appointmentData['end_at']) && $oldEndAt->ne($appointmentData['end_at'])));
-
-                if ($isTimeChanged) {
-                    if (!$appointment->original_start_at) {
-                        $appointmentData['original_start_at'] = $oldStartAt;
-                    }
-
-                    $appointmentData['status'] = Appointment::STATUS_RESCHEDULED;
-                    $appointmentData['rescheduled_by'] = auth()->id();
-                    $appointmentData['rescheduled_at'] = now();
-                    $appointmentData['reschedule_reason'] = $request->input('reason', 'Thay đổi thời gian');
-                }
-
-                $appointment = $this->appointmentRepository->update($appointmentData, $id);
-
-                if ($request->filled('assigned_user_id')) {
-                    $appointment->assigned_user_id = $request->assigned_user_id;
-                    $appointment->save();
-                }
-
-                $appointment->load(['lead.person', 'assignedUser']);
-
-                if ($isTimeChanged) {
-                    event(new \Webkul\Appointment\Events\AppointmentRescheduled(
-                        $appointment,
-                        $oldStartAt,
-                        $oldEndAt,
-                        $request->input('reason', 'Thay đổi thời gian')
-                    ));
-                } else {
-                    event(new \Webkul\Appointment\Events\AppointmentUpdated(
-                        $appointment,
-                        $appointmentData
-                    ));
-                }
-
-                DB::commit();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Cập nhật lịch hẹn thành công',
-                    'data' => $this->formatAppointmentResponse($appointment)
-                ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-
-                Log::error('Appointment update error: ' . $e->getMessage(), [
-                    'appointment_id' => $id,
-                    'request' => $request->all(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Lỗi hệ thống: ' . $e->getMessage()
-                ], 500);
-            }
+        if (!$appointment->canEdit()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể sửa lịch hẹn ở trạng thái: ' . $appointment->status
+            ], 422);
         }
+
+        $validator = $this->validateUpdateRequest($request);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $timeData = $this->processDateTime($request);
+
+            $appointmentData = [];
+
+            // Thông tin thời gian
+            if ($request->filled('start_at')) {
+                $appointmentData['start_at'] = $timeData['start_at'];
+            }
+            if ($request->filled('end_at') || $request->filled('duration_minutes')) {
+                $appointmentData['end_at'] = $timeData['end_at'];
+            }
+            if ($request->filled('duration_minutes')) {
+                $appointmentData['duration_minutes'] = $request->duration_minutes;
+            }
+
+            // Thông tin lịch hẹn
+            if ($request->filled('meeting_type')) {
+                $appointmentData['meeting_type'] = $request->meeting_type;
+
+                if ($request->meeting_type !== 'call') {
+                    $appointmentData['call_phone'] = null;
+                }
+                if ($request->meeting_type !== 'online') {
+                    $appointmentData['meeting_link'] = null;
+                }
+                if ($request->meeting_type !== 'onsite') {
+                    $appointmentData['province'] = null;
+                    $appointmentData['district'] = null;
+                    $appointmentData['ward'] = null;
+                    $appointmentData['street_address'] = null;
+                }
+            }
+
+            if ($request->filled('call_phone')) $appointmentData['call_phone'] = $request->call_phone;
+            if ($request->filled('meeting_link')) $appointmentData['meeting_link'] = $request->meeting_link;
+            if ($request->filled('province')) $appointmentData['province'] = $request->province;
+            if ($request->filled('district')) $appointmentData['district'] = $request->district;
+            if ($request->filled('ward')) $appointmentData['ward'] = $request->ward;
+            if ($request->filled('street_address')) $appointmentData['street_address'] = $request->street_address;
+
+            // Thông tin dịch vụ
+            if ($request->filled('service_id')) $appointmentData['service_id'] = $request->service_id;
+
+            // Ghi chú
+            if ($request->has('note')) $appointmentData['note'] = $request->note;
+
+            // Kiểm tra thay đổi thời gian
+            $oldStartAt = $appointment->start_at;
+            $oldEndAt = $appointment->end_at;
+            $isTimeChanged = isset($appointmentData['start_at']) &&
+                            ($oldStartAt->ne($appointmentData['start_at']) ||
+                            (isset($appointmentData['end_at']) && $oldEndAt->ne($appointmentData['end_at'])));
+
+            if ($isTimeChanged && !$appointment->original_start_at) {
+                $appointmentData['original_start_at'] = $oldStartAt;
+            }
+
+            // Xử lý status theo lead_id
+            if ($appointment->lead_id) {
+                // Lịch có khách hàng → đặt lại
+                $appointmentData['status'] = Appointment::STATUS_RESCHEDULED;
+                $appointmentData['rescheduled_by'] = auth()->id();
+                $appointmentData['rescheduled_at'] = now();
+                $appointmentData['reschedule_reason'] = $request->input('reason', 'Thay đổi thông tin lịch hẹn');
+            } else {
+                // Lịch không có lead → xác nhận ngay
+                $appointmentData['status'] = Appointment::STATUS_CONFIRMED;
+            }
+
+            // Cập nhật dữ liệu
+            $appointment = $this->appointmentRepository->update($appointmentData, $id);
+
+            // Gán nhân viên nếu có
+            if ($request->filled('assigned_user_id')) {
+                $appointment->assigned_user_id = $request->assigned_user_id;
+                $appointment->save();
+            }
+
+            $appointment->load(['lead.person', 'assignedUser']);
+
+            // Dispatch event
+            if ($isTimeChanged && $appointment->lead_id) {
+                event(new \Webkul\Appointment\Events\AppointmentRescheduled(
+                    $appointment,
+                    $oldStartAt,
+                    $oldEndAt,
+                    $request->input('reason', 'Thay đổi thông tin lịch hẹn')
+                ));
+            } else {
+                event(new \Webkul\Appointment\Events\AppointmentUpdated(
+                    $appointment,
+                    $appointmentData
+                ));
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật lịch hẹn thành công',
+                'data' => $this->formatAppointmentResponse($appointment)
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Appointment update error: ' . $e->getMessage(), [
+                'appointment_id' => $id,
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi hệ thống: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Show detail

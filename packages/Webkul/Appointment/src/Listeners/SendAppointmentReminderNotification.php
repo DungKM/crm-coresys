@@ -2,90 +2,106 @@
 
 namespace Webkul\Appointment\Listeners;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Webkul\Appointment\Models\AppointmentEmailLog;
 use Webkul\Appointment\Events\AppointmentReminder;
 use Webkul\Appointment\Mail\AppointmentReminderMail;
-use Webkul\Appointment\Models\AppointmentEmailLog;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendAppointmentReminderNotification implements ShouldQueue
+class SendAppointmentReminderNotification
 {
+    /**
+     * Handle the event.
+     *
+     * @param AppointmentReminder $event
+     * @return void
+     */
     public function handle(AppointmentReminder $event)
     {
         $appointment = $event->appointment;
-        $hoursUntil = $event->hoursUntil;
+        $minutesUntil = $event->minutesUntil;
 
         if (!config('appointment.email.enabled')) {
             return;
         }
 
         try {
-            // Gửi cho khách hàng
+            // Load relationships nếu chưa có
+            if (!$appointment->relationLoaded('assignedUser')) {
+                $appointment->load('assignedUser');
+            }
+            if (!$appointment->relationLoaded('service')) {
+                $appointment->load('service');
+            }
+
+            // Gửi email cho khách hàng
             if (config('appointment.email.send_to_customer') && !empty($appointment->customer_email)) {
                 $emailLog = $appointment->generateEmailToken(
                     AppointmentEmailLog::EMAIL_TYPE_REMINDER,
                     $appointment->customer_email,
                     'customer',
-                    ['hours_until' => $hoursUntil],
-                    $hoursUntil
+                    ['minutes_until' => $minutesUntil],
+                    $minutesUntil
                 );
 
                 Mail::to($appointment->customer_email)
-                    ->send(new AppointmentReminderMail($appointment, $emailLog, $hoursUntil));
+                    ->send(new AppointmentReminderMail(
+                        $appointment,
+                        $emailLog,
+                        $minutesUntil
+                    ));
 
-                // Update reminder_sent_at
+                // Cập nhật reminder_sent_at
                 $remindersSent = $appointment->reminder_sent_at ?? [];
                 $remindersSent[] = [
-                    'hours' => $hoursUntil,
+                    'minutes' => $minutesUntil,
                     'sent_at' => now()->toDateTimeString(),
                     'email_log_id' => $emailLog->id,
+                    'recipient' => 'customer',
                 ];
-
                 $appointment->update(['reminder_sent_at' => $remindersSent]);
 
                 Log::info('Appointment reminder email sent to customer', [
                     'appointment_id' => $appointment->id,
                     'customer_email' => $appointment->customer_email,
-                    'hours_until' => $hoursUntil,
+                    'minutes_until' => $minutesUntil,
                     'email_log_id' => $emailLog->id,
                 ]);
             }
 
-            // Gửi cho nhân viên
+            // Gửi email cho nhân viên được phân công
             if (config('appointment.email.send_to_assigned_user')) {
-                if (!$appointment->relationLoaded('assignedUser')) {
-                    $appointment->load('assignedUser');
-                }
-
                 if ($appointment->assignedUser && !empty($appointment->assignedUser->email)) {
-
                     $emailLog = $appointment->generateEmailToken(
                         AppointmentEmailLog::EMAIL_TYPE_REMINDER,
                         $appointment->assignedUser->email,
                         'assigned_user',
-                        ['hours_until' => $hoursUntil]
+                        ['minutes_until' => $minutesUntil]
                     );
 
-                    // ✅ view riêng cho nhân viên
+                    // View riêng cho nhân viên
                     $staffView = 'appointment::admin.appointments.staff-emails.reminder';
 
                     Mail::to($appointment->assignedUser->email)
-                        ->send(new AppointmentReminderMail($appointment, $emailLog, $hoursUntil, $staffView));
+                        ->send(new AppointmentReminderMail(
+                            $appointment,
+                            $emailLog,
+                            $minutesUntil,
+                            $staffView
+                        ));
 
                     Log::info('Appointment reminder email sent to assigned user', [
                         'appointment_id' => $appointment->id,
                         'user_email' => $appointment->assignedUser->email,
-                        'hours_until' => $hoursUntil,
+                        'minutes_until' => $minutesUntil,
                         'email_log_id' => $emailLog->id,
                     ]);
                 }
             }
-
-
         } catch (\Exception $e) {
             Log::error('Failed to send appointment reminder email', [
                 'appointment_id' => $appointment->id,
+                'minutes_until' => $minutesUntil,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);

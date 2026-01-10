@@ -15,10 +15,19 @@
                 <div class="flex items-center gap-x-2.5">
                     <!-- Nút Tạo lịch hẹn -->
                     <a
+                        href="{{ route('admin.appointments.create-newCustomer') }}"
+                        class="px-4 py-2 bg-white text-gray-800 border border-gray-300 rounded-lg
+                            hover:bg-gray-100 hover:border-gray-400 transition-colors flex items-center gap-2"
+                    >
+                        <i class="icon-add"></i>
+                        Tạo lịch hẹn cho khách hàng mới
+                    </a>
+
+                    <a
                         href="{{ route('admin.appointments.create') }}"
                         class="px-4 py-2 bg-brandColor text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                        <i class="icon-add"></i> Tạo lịch hẹn
+                        <i class="icon-add"></i> Tạo lịch hẹn cho khách hàng tiềm năng
                     </a>
                 </div>
             </div>
@@ -185,13 +194,13 @@
                                                     @click="setAttendance('showed')"
                                                     class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                                                 >
-                                                    Khách hàng đã đến
+                                                    Đã hoàn thành
                                                 </button>
 
                                                 <button class="bg-red-600 !text-black !opacity-100 font-bold"
                                                     @click="setAttendance('no_show')"
                                                 >
-                                                    Khách hàng không đến
+                                                    Chưa hoàn thành
                                                 </button>
                                             </div>
 
@@ -653,13 +662,34 @@
                                 );
 
                                 if (res.data.success) {
+                                    // ✅ Cập nhật status trong modal
                                     this.editingAppointment.status = status;
+                                    this.editingAppointment.raw_status = status;
 
-                                   this.$toast.success(res.data.message || 'Cập nhật thành công');
+                                    // ✅ Cập nhật status trong events array
+                                    const eventIndex = this.events.findIndex(e => e.id === this.editingAppointment.id);
+                                    if (eventIndex !== -1) {
+                                        this.events[eventIndex].status = status;
+                                        this.events[eventIndex].raw_status = status;
 
+                                        // ✅ Cập nhật màu sắc
+                                        const statusColors = {
+                                            'showed': '#3b82f6',      // Xanh dương
+                                            'no_show': '#6b7280',     // Xám
+                                            'completed': '#3b82f6'    // Xanh dương
+                                        };
+                                        this.events[eventIndex].borderColor = statusColors[status];
+                                    }
+
+                                    // ✅ Force Vue Calendar re-render
+                                    this.$refs.vuecal.$forceUpdate();
+
+                                    this.$toast.success(res.data.message || 'Cập nhật thành công');
+
+                                    // ✅ KHÔNG reload trang, chỉ đóng modal sau 500ms
                                     setTimeout(() => {
-                                        window.location.reload();
-                                    }, 300);
+                                        this.closeEdit();
+                                    }, 500);
                                 }
                             } catch (err) {
                                 this.$toast.error(
@@ -687,7 +717,7 @@
                             'confirmed': 5,
                             'scheduled': 4,
                             'rescheduled': 3,
-                            'showed': 2,
+                            'showed': 2,       // ✅ Showed có priority cao
                             'completed': 2,
                             'no_show': 1,
                             'cancelled': 0
@@ -736,37 +766,40 @@
                         return filteredAppointments.map(apt => {
                             let displayStatus = apt.status;
 
+                            // ✅ Chỉ merge scheduled/rescheduled thành pending
+                            // ✅ KHÔNG merge showed/completed
                             if (['scheduled', 'rescheduled'].includes(apt.status)) {
                                 displayStatus = 'pending';
                             }
 
+                            // ✅ FIX: Màu sắc chính xác cho showed
                             const statusColors = {
-                                'pending': '#fbbf24',
-                                'confirmed': '#10b981',
-                                'completed': '#3b82f6',
-                                'cancelled': '#ef4444',
-                                'no_show': '#6b7280',
-                                'showed': '#3b82f6'
+                                'pending': '#fbbf24',      // Vàng
+                                'confirmed': '#10b981',    // Xanh lá
+                                'showed': '#3b82f6',       // ✅ Xanh dương (không phải xám)
+                                'completed': '#3b82f6',    // Xanh dương
+                                'cancelled': '#ef4444',    // Đỏ
+                                'no_show': '#6b7280'       // Xám
                             };
 
                             return {
-                                // ✅ Thông tin cơ bản
+                                // Thông tin cơ bản
                                 id: apt.id,
                                 start: apt.start_at,
                                 end: apt.end_at,
                                 title: apt.customer_name,
 
-                                // ✅ Thông tin khách hàng
+                                // Thông tin khách hàng
                                 customer_name: apt.customer_name,
                                 customer_phone: apt.customer_phone,
                                 customer_email: apt.customer_email,
 
-                                // ✅ Thông tin thời gian
-                                requested_at: apt.requested_at,           // ✅ THÊM
-                                duration_minutes: apt.duration_minutes,   // ✅ THÊM
-                                timezone: apt.timezone,                   // ✅ THÊM
+                                // Thông tin thời gian
+                                requested_at: apt.requested_at,
+                                duration_minutes: apt.duration_minutes,
+                                timezone: apt.timezone,
 
-                                // ✅ Thông tin lịch hẹn
+                                // Thông tin lịch hẹn
                                 meeting_type: apt.meeting_type,
                                 call_phone: apt.call_phone,
                                 meeting_link: apt.meeting_link,
@@ -775,27 +808,27 @@
                                 ward: apt.ward,
                                 street_address: apt.street_address,
 
-                                // ✅ Thông tin dịch vụ
+                                // Thông tin dịch vụ
                                 service_id: apt.service_id,
                                 service_name: apt.service_name,
 
-                                // ✅ Thông tin phân công
-                                assignment_type: apt.assignment_type,     // ✅ THÊM
-                                assigned_user_id: apt.assigned_user_id,   // ✅ THÊM
-                                assigned_user_name: apt.assigned_user_name, // ✅ THÊM
-                                routing_key: apt.routing_key,             // ✅ THÊM
-                                resource_id: apt.resource_id,             // ✅ THÊM
+                                // Thông tin phân công
+                                assignment_type: apt.assignment_type,
+                                assigned_user_id: apt.assigned_user_id,
+                                assigned_user_name: apt.assigned_user_name,
+                                routing_key: apt.routing_key,
+                                resource_id: apt.resource_id,
 
-                                // ✅ Thông tin khác
-                                channel: apt.channel,                     // ✅ THÊM
+                                // Thông tin khác
+                                channel: apt.channel,
                                 note: apt.note,
 
-                                // ✅ Trạng thái
+                                // Trạng thái - LƯU CẢ RAW STATUS
                                 status: displayStatus,
                                 raw_status: apt.status,
                                 class: `status-${displayStatus}`,
                                 background: '#ffffff',
-                                borderColor: statusColors[displayStatus],
+                                borderColor: statusColors[displayStatus] || statusColors[apt.status] || '#6b7280',
                             };
                         });
                     },
@@ -882,11 +915,11 @@
 
                             this.saving = true;
 
-                            // ✅ MERGE toàn bộ appointment + form đã sửa
+                            // MERGE toàn bộ appointment + form đã sửa
                             const payload = {
-                                ...this.editingAppointment,  // ✅ Lấy tất cả fields gốc
-                                ...this.editForm,             // ✅ Override bằng fields đã sửa
-                                reason: reason                // ✅ Thêm lý do
+                                ...this.editingAppointment,  // Lấy tất cả fields gốc
+                                ...this.editForm,             // Override bằng fields đã sửa
+                                reason: reason                // Thêm lý do
                             };
 
                             // Loại bỏ các field không cần thiết (nếu có)
@@ -894,6 +927,9 @@
                             delete payload.class;
                             delete payload.background;
                             delete payload.borderColor;
+
+                            this.showUpdateReasonModal = false;
+                            this.updateReason = '';
 
                             axios.post(
                                 `/admin/appointments/${this.editingAppointment.id}/update`,
@@ -918,6 +954,9 @@
                             const reason = this.cancelReason.trim() || 'Khách hàng hủy không rõ lý do';
 
                             this.saving = true;
+
+                            this.showCancelReasonModal = false;
+                            this.cancelReason = '';
 
                             axios.post(
                                 `/admin/appointments/${this.editingAppointment.id}/cancel`,
@@ -970,26 +1009,30 @@
 
                         getStatusColor(status) {
                             const statusColors = {
-                                'pending': '#fbbf24',
-                                'confirmed': '#10b981',
-                                'completed': '#3b82f6',
-                                'cancelled': '#ef4444',
-                                'no_show': '#6b7280'
+                                'pending': '#fbbf24',      // Vàng
+                                'confirmed': '#10b981',    // Xanh lá
+                                'showed': '#3b82f6',       // Xanh dương
+                                'completed': '#3b82f6',    // Xanh dương
+                                'cancelled': '#ef4444',    // Đỏ
+                                'no_show': '#6b7280',      // Xám
+                                'scheduled': '#fbbf24',    // Vàng
+                                'rescheduled': '#fbbf24'   // Vàng
                             };
                             return statusColors[status] || '#6b7280';
                         },
 
                         getStatusLabel(status) {
-                            const labels = {
-                                'scheduled': 'Đã đặt lịch',
-                                'rescheduled': 'Đã đổi lịch',
-                                'confirmed': 'Đã xác nhận',
-                                'completed': 'Hoàn thành',
-                                'cancelled': 'Đã hủy',
-                                'no_show': 'Không đến'
-                            };
-                            return labels[status] || status;
-                        },
+                        const labels = {
+                            'scheduled': 'Đã đặt lịch',
+                            'rescheduled': 'Đã đổi lịch',
+                            'confirmed': 'Đã xác nhận',
+                            'showed': 'Đã hoàn thành',
+                            'completed': 'Hoàn thành',
+                            'cancelled': 'Đã hủy',
+                            'no_show': 'Không đến'
+                        };
+                        return labels[status] || status;
+                    },
                         handleMeetingTypeChange() {
                         // Reset các trường không liên quan khi đổi loại
                         if (this.editForm.meeting_type !== 'call') {
