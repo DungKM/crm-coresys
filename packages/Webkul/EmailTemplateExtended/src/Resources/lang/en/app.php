@@ -1,0 +1,88 @@
+<?php
+
+return [
+    'templates' => [
+        'index' => [
+            'title'        => 'Email Templates',
+            'create-btn'   => 'Create Template',
+            'table' => [
+                'name'     => 'Name',
+                'category' => 'Category',
+                'locale'   => 'Locale',
+                'status'   => 'Status',
+                'usage'    => 'Usage Count',
+                'actions'  => 'Actions',
+            ],
+        ],
+
+        'create' => [
+            'title'              => 'Create Email Template',
+            'save-btn'           => 'Save Template',
+            'back-btn'           => 'Back',
+            'basic-info'         => 'Basic Information',
+            'name'               => 'Name',
+            'subject'            => 'Subject',
+            'content'            => 'Content',
+            'use-variables'      => 'You can use variables in this format:',
+            'preview-text'       => 'Preview Text',
+            'preview-text-hint'  => 'Short description shown in inbox',
+            'settings'           => 'Settings',
+            'category'           => 'Category',
+            'select-category'    => 'Select Category',
+            'locale'             => 'Locale',
+            'tags'               => 'Tags',
+            'tags-hint'          => 'Enter tags separated by commas',
+            'is-active'          => 'Activate Template',
+            'variables'          => 'Variables',
+            'variables-hint'     => 'List of variables you can use in this template.',
+        ],
+
+        'edit' => [
+            'title'                       => 'Edit Email Template',
+            'save-btn'                    => 'Update',
+            'preview-btn'                 => 'Preview',
+            'back-btn'                    => 'Back',
+            'basic-info'                  => 'Basic Information',
+            'name'                        => 'Template Name',
+            'subject'                     => 'Subject',
+            'content'                     => 'Content',
+            'preview-text'                => 'Preview Text',
+            'settings'                    => 'Settings',
+            'category'                    => 'Category',
+            'locale'                      => 'Locale',
+            'tags'                        => 'Tags',
+            'tags-hint'                   => 'Enter tags separated by commas',
+            'is-active'                   => 'Activate Template',
+            'quick-actions'               => 'Quick Actions',
+            'clone-btn'                   => 'Clone',
+            'export-btn'                  => 'Export',
+            'variables-used'              => 'Variables Used',
+            'undefined-variables-warning' => 'Some variables are undefined:',
+        ],  
+        
+        'show' => [
+            'edit-btn'      => 'Edit',
+            'preview-btn'   => 'Preview',
+            'clone-btn'     => 'Clone',
+            'export-btn'    => 'Export',
+            'back-btn'      => 'Back',
+            'basic-info'    => 'Basic Information',
+            'subject'       => 'Subject',
+            'content'       => 'Content',
+            'variables'     => 'Variables Used',
+            'clone-history' => 'Clone History',
+            'metadata'      => 'Metadata',
+        ],
+
+        'messages' => [
+            'create-success' => 'Email template created successfully',
+            'update-success' => 'Email template updated successfully',
+            'delete-success' => 'Email template deleted successfully',
+            'import-success' => 'Email template imported successfully',
+            'import-error'   => 'Invalid import file',
+            'clone-success'  => 'Email template cloned successfully',
+            'status-updated' => 'Status updated successfully',
+        ],
+    ],
+];
+
