@@ -135,5 +135,13 @@ return [
         'tip_monitor_performance' => 'Monitor performance regularly',
         'campaign_create_note' => 'Campaign will be created in Google Ads immediately',
         'campaign_sync_note' => 'Changes will be synced to Google Ads API. Some fields may take time to reflect in Google Ads dashboard.',
+
+        // Messages
+        'campaign-created' => 'Campaign created successfully',
+        'campaign-create-failed' => 'Failed to create campaign',
+        'campaign-updated' => 'Campaign updated successfully',
+        'campaign-update-failed' => 'Failed to update campaign',
+        'campaign-deleted' => 'Campaign deleted successfully',
+        'campaign-delete-failed' => 'Failed to delete campaign',
     ],
 ];

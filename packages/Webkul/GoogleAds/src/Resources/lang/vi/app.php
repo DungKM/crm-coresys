@@ -135,5 +135,13 @@ return [
         'tip_monitor_performance' => 'Theo dõi hiệu suất thường xuyên',
         'campaign_create_note' => 'Chiến dịch sẽ được tạo trong Google Ads ngay lập tức',
         'campaign_sync_note' => 'Thay đổi sẽ được đồng bộ với Google Ads API. Một số trường có thể mất thời gian để phản ánh trong bảng điều khiển Google Ads.',
+
+        // Messages
+        'campaign-created' => 'Chiến dịch đã được tạo thành công',
+        'campaign-create-failed' => 'Không thể tạo chiến dịch',
+        'campaign-updated' => 'Chiến dịch đã được cập nhật thành công',
+        'campaign-update-failed' => 'Không thể cập nhật chiến dịch',
+        'campaign-deleted' => 'Chiến dịch đã được xóa thành công',
+        'campaign-delete-failed' => 'Không thể xóa chiến dịch',
     ],
 ];

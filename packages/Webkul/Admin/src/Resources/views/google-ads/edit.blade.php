@@ -45,9 +45,9 @@
                         </label>
                         <select name="status"
                             class="w-full rounded-lg border border-gray-300 px-4 py-2 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-                            <option value="2" {{ $campaign['status'] == 2 ? 'selected' : '' }}>@lang('googleads::app.google-ads.active')</option>
-                            <option value="3" {{ $campaign['status'] == 3 ? 'selected' : '' }}>@lang('googleads::app.google-ads.paused')</option>
-                            <option value="4" {{ $campaign['status'] == 4 ? 'selected' : '' }}>@lang('googleads::app.google-ads.removed')</option>
+                            <option value="ENABLED" {{ $campaign['status'] == 2 ? 'selected' : '' }}>@lang('googleads::app.google-ads.active')</option>
+                            <option value="PAUSED" {{ $campaign['status'] == 3 ? 'selected' : '' }}>@lang('googleads::app.google-ads.paused')</option>
+                            <option value="REMOVED" {{ $campaign['status'] == 4 ? 'selected' : '' }}>@lang('googleads::app.google-ads.removed')</option>
                         </select>
                     </div>
 

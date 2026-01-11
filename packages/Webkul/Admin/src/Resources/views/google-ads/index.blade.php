@@ -311,20 +311,47 @@
                 const statsCards = document.getElementById('statistics-cards');
                 
                 // Check if we have error state
-                const hasError = tableBody && tableBody.querySelector('td[colspan="8"]')?.textContent.includes('Không thể kết nối');
+                const errorCell = tableBody?.querySelector('td[colspan="9"]');
+                const hasError = errorCell && (
+                    errorCell.textContent.includes('Không thể kết nối') || 
+                    errorCell.textContent.includes('Google Ads API')
+                );
                 
                 if (hasError) {
-                    console.log('Google Ads API error detected. Data may be temporarily unavailable.');
-                    // Optional: Auto-retry after 5 seconds
-                    // setTimeout(() => window.location.reload(), 5000);
+                    console.error('Google Ads API error detected. Please check credentials in .env file.');
+                    
+                    // Show helpful message
+                    const errorDiv = errorCell.querySelector('.flex.flex-col');
+                    if (errorDiv) {
+                        const helpText = document.createElement('div');
+                        helpText.className = 'mt-4 text-sm text-gray-600 dark:text-gray-400';
+                        helpText.innerHTML = `
+                            <p><strong>Giải pháp:</strong></p>
+                            <ol class="list-decimal list-inside mt-2 space-y-1">
+                                <li>Kiểm tra file .env có đầy đủ GOOGLE_ADS_* credentials</li>
+                                <li>Chạy: <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">php artisan config:clear</code></li>
+                                <li>Chạy: <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">php artisan cache:clear</code></li>
+                                <li>Reload lại trang này</li>
+                            </ol>
+                        `;
+                        errorDiv.appendChild(helpText);
+                    }
                 }
 
-                // Add loading class during page load
+                // Add smooth loading animation for stats cards
                 if (statsCards) {
                     statsCards.classList.add('animate-pulse');
                     setTimeout(() => {
                         statsCards.classList.remove('animate-pulse');
-                    }, 1000);
+                    }, 800);
+                }
+
+                // Auto-refresh if data is loading (skeleton state)
+                const hasSkeleton = tableBody?.querySelector('.skeleton');
+                if (hasSkeleton) {
+                    console.log('Loading campaigns data...');
+                    // Optional: Show loading notification
+                    // setTimeout(() => window.location.reload(), 3000);
                 }
             });
         </script>
