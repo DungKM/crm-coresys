@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/vendor/emailtemplateextended/email-builder/assets/favicon-32x32-Cy_yPube.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/vendor/emailtemplateextended/email-builder/assets/favicon-16x16-Dp-UsuYg.png" />
+    <meta name="viewport" content="width=900" />
+    <meta name="description" content="EmailBuilder.js interactive playground. Brought to you by Waypoint." />
+    <title>EmailBuilder.js &mdash; Free and Open Source Template Builder</title>
+    <style>
+      html, body, #root {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+      }
+    </style>
+    <script type="module" crossorigin src="/vendor/emailtemplateextended/email-builder/assets/index-i_P76Fet.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script>
+      (function() {
+        'use strict';
+        
+        var ready = false;
+        var root = document.getElementById('root');
+        var readyCheckCount = 0;
+        var maxChecks = 100;
+
+        var checkInterval = setInterval(function() {
+          readyCheckCount++;
+          
+          if (root.children.length > 0 && window.__EMAIL_BUILDER_STORE__) {
+            clearInterval(checkInterval);
+            
+            setTimeout(function() {
+              ready = true;
+              window.parent.postMessage({type: 'emailBuilderReady'}, '*');
+            }, 500);
+          }
+          
+          if (readyCheckCount > maxChecks) {
+            clearInterval(checkInterval);
+            window.parent.postMessage({
+              type: 'emailBuilderError',
+              error: 'Initialization timeout'
+            }, '*');
+          }
+        }, 100);
+
+        function flattenDesign(design) {
+          if (!design.body || !design.body.rows) return design;
+          
+          var blocks = {};
+          var childrenIds = [];
+          
+          design.body.rows.forEach(function(row) {
+            if (!row.id || !row.columns) return;
+            
+            var containerChildrenIds = [];
+            
+            row.columns.forEach(function(column) {
+              if (!column.id || !column.children) return;
+              
+              var columnChildrenIds = [];
+              
+              column.children.forEach(function(block) {
+                if (!block.id) return;
+                
+                blocks[block.id] = {
+                  type: block.type,
+                  data: block.data || {}
+                };
+                columnChildrenIds.push(block.id);
+              });
+              
+              blocks[column.id] = {
+                type: 'Column',
+                data: Object.assign({}, column.data || {}, {
+                  childrenIds: columnChildrenIds
+                })
+              };
+              containerChildrenIds.push(column.id);
+            });
+            
+            blocks[row.id] = {
+              type: 'Container',
+              data: Object.assign({}, row.data || {}, {
+                childrenIds: containerChildrenIds
+              })
+            };
+            childrenIds.push(row.id);
+          });
+          
+          var result = {
+            root: {
+              type: 'EmailLayout',
+              data: Object.assign({}, design.body.data || {}, {
+                childrenIds: childrenIds
+              })
+            }
+          };
+          
+          for (var key in blocks) {
+            result[key] = blocks[key];
+          }
+          
+          return result;
+        }
+
+        function cleanEmailHTML(html) {
+          var tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+          tempDiv.querySelectorAll('button, svg').forEach(function(el) {
+            el.remove();
+          });
+
+          tempDiv.querySelectorAll('[class*="Mui"]').forEach(function(el) {
+            var className = el.className || '';
+            
+            if ((className.includes('MuiBox-root') && className.includes('css-11sjlmd')) ||
+                (className.includes('MuiBox-root') && className.includes('css-15uowv5'))) {
+              el.removeAttribute('class');
+              return;
+            }
+
+            if (className.includes('MuiPaper') || 
+                className.includes('MuiStack') || 
+                className.includes('MuiIconButton') ||
+                className.includes('MuiTouchRipple')) {
+              el.remove();
+            }
+          });
+          
+          tempDiv.querySelectorAll('div[style*="position: relative"]').forEach(function(el) {
+            el.remove();
+          });
+          
+          tempDiv.querySelectorAll('*').forEach(function(el) {
+            var className = el.className || '';
+            if (className && (className.includes('Mui') || className.includes('css-'))) {
+              el.removeAttribute('class');
+            }
+          });
+          
+          return tempDiv.innerHTML;
+        }
+
+        window.addEventListener('message', function(e) {
+          if (!e.data || !e.data.action) return;
+          
+          var action = e.data.action;
+
+          if (action === 'load') {
+            if (!ready) return;
+            
+            var design = e.data.design;
+            if (!design) return;
+            
+            try {
+              if (typeof design === 'string') {
+                design = JSON.parse(design);
+              }
+              
+              if (design.body && design.body.rows && Array.isArray(design.body.rows)) {
+                design = flattenDesign(design);
+              }
+              
+              if (!window.loadDesignFromExternal) {
+                throw new Error('loadDesignFromExternal not available');
+              }
+              
+              if (window.loadDesignFromExternal(design)) {
+                window.parent.postMessage({
+                  type: 'emailBuilderLoaded',
+                  success: true
+                }, '*');
+              }
+            } catch (err) {
+              window.parent.postMessage({
+                type: 'emailBuilderError',
+                error: err.message
+              }, '*');
+            }
+          }
+          
+          else if (action === 'export') {
+            if (!ready) return;
+            
+            try {
+              if (!window.__EMAIL_BUILDER_STORE__) {
+                throw new Error('Builder store not available');
+              }
+              
+              var store = window.__EMAIL_BUILDER_STORE__;
+              var design = store.getState().document;
+              
+              if (!design || !design.root) {
+                throw new Error('Invalid design structure');
+              }
+
+              var html = '';
+              var wrappers = root.querySelectorAll('div[style*="background-color"]');
+              
+              for (var i = 0; i < wrappers.length; i++) {
+                var wrapper = wrappers[i];
+                var style = wrapper.getAttribute('style') || '';
+                
+                if (style.includes('background-color') && 
+                    style.includes('padding') && 
+                    wrapper.querySelector('table[role="presentation"]')) {
+                  html = wrapper.outerHTML;
+                  break;
+                }
+              }
+
+              if (!html) {
+                var table = root.querySelector('table[role="presentation"]');
+                if (table) {
+                  var parentDiv = table.closest('div[style]');
+                  html = parentDiv ? parentDiv.outerHTML : table.outerHTML;
+                }
+              }
+              
+              if (!html) {
+                throw new Error('Could not find email HTML in DOM');
+              }
+              html = cleanEmailHTML(html);
+
+              if (!html || html.trim().length === 0) {
+                throw new Error('Cleaned HTML is empty');
+              }
+              
+              var textContent = html.replace(/<[^>]*>/g, '').trim();
+              if (textContent.length === 0) {
+                throw new Error('HTML has no text content');
+              }
+
+              window.parent.postMessage({
+                type: 'emailBuilderExport',
+                design: design,
+                html: html
+              }, '*');
+              
+            } catch (err) {
+              window.parent.postMessage({
+                type: 'emailBuilderError',
+                error: err.message
+              }, '*');
+            }
+          }
+
+          else if (action === 'clear') {
+            if (!ready) return;
+            
+            try {
+              if (window.clearDesign) {
+                window.clearDesign();
+              }
+            } catch (err) {
+              console.error('Clear error:', err);
+            }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
