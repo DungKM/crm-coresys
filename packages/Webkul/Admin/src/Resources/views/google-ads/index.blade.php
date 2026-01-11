@@ -3,6 +3,25 @@
         @lang('googleads::app.google-ads.title')
     </x-slot:title>
 
+    @pushOnce('styles')
+        <style>
+            [x-cloak]{display:none !important;}
+            .skeleton {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: loading 1.5s ease-in-out infinite;
+            }
+            @keyframes loading {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+            .dark .skeleton {
+                background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+                background-size: 200% 100%;
+            }
+        </style>
+    @endPushOnce
+
     <div class="flex flex-col gap-4">
         <!-- Header with Breadcrumbs -->
         <div
@@ -14,167 +33,48 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button
-                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-                    @lang('googleads::app.google-ads.create_audience')
-                </button>
-                <button class="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600">
-                    @lang('googleads::app.google-ads.create_campaign')
-                </button>
+                <a href="{{ route('admin.google_ads.campaigns.create') }}" class="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600">
+                    + @lang('googleads::app.google-ads.create_campaign')
+                </a>
             </div>
-        </div>
-
-        <!-- Billing Alert -->
-        <div class="rounded-lg border-l-4 border-orange-500 bg-orange-50 p-4 dark:border-orange-700 dark:bg-gray-900">
-            <div class="flex items-start gap-3">
-                <div class="flex-1">
-                    <h3 class="font-semibold text-orange-900 dark:text-orange-300">
-                        @lang('googleads::app.google-ads.billing_issue')
-                    </h3>
-                    <p class="mt-1 text-sm text-orange-800 dark:text-orange-400">
-                        @lang('googleads::app.google-ads.billing_description')
-                    </p>
-                </div>
-                <button class="text-orange-600 hover:text-orange-700 dark:text-orange-400">
-                    ✕
-                </button>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div
-            class="flex items-center gap-8 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 px-4">
-            <button
-                class="border-b-2 border-blue-600 py-3 font-semibold text-blue-600 dark:border-blue-500 dark:text-blue-400">
-                @lang('googleads::app.google-ads.manage')
-            </button>
-            <button
-                class="border-b-2 border-transparent py-3 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
-                @lang('googleads::app.google-ads.audiences')
-            </button>
-            <button
-                class="border-b-2 border-transparent py-3 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
-                @lang('googleads::app.google-ads.events')
-            </button>
-            <button
-                class="border-b-2 border-transparent py-3 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
-                @lang('googleads::app.google-ads.analyze')
-            </button>
         </div>
 
         <!-- Main Content -->
-        <div class="grid grid-cols-12 gap-4">
-            <!-- Sidebar -->
-            <div class="col-span-3">
-                <div class="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-                    <div
-                        class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-900 dark:border-gray-800 dark:text-white">
-                        @lang('googleads::app.google-ads.ad_campaigns')
+        <div class="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+            <!-- Filters -->
+            <div class="border-b border-gray-200 p-4 dark:border-gray-800">
+            <!-- Filters -->
+            <div class="border-b border-gray-200 p-4 dark:border-gray-800">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="font-semibold text-gray-900 dark:text-white">@lang('googleads::app.google-ads.account'):</span>
+                        <span class="text-gray-600 dark:text-gray-400">
+                            @if($account_name && $customer_id)
+                                {{ $account_name }} ({{ substr($customer_id, 0, 3) }}-{{ substr($customer_id, 3, 3) }}-{{ substr($customer_id, 6) }})
+                            @else
+                                N/A
+                            @endif
+                        </span>
                     </div>
-                    <div class="p-4">
-                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                            <span class="text-2xl font-bold">📊</span>
-                            <span>@lang('googleads::app.google-ads.active_campaigns'): <strong>0</strong></span>
-                        </div>
-                        <div class="mt-4 space-y-2">
-                            <a href="#"
-                                class="block rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
-                                @lang('googleads::app.google-ads.all_campaigns')
-                            </a>
-                            <a href="#"
-                                class="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
-                                @lang('googleads::app.google-ads.drafts')
-                            </a>
-                            <a href="#"
-                                class="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
-                                @lang('googleads::app.google-ads.active')
-                            </a>
-                            <a href="#"
-                                class="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
-                                @lang('googleads::app.google-ads.paused')
-                            </a>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="@lang('googleads::app.google-ads.search_campaigns')"
+                            class="rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500" />
+                        <button
+                            class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            🔍
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Content Area -->
-            <div class="col-span-9">
-                <div class="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-                    <!-- TIP Banner -->
-                    <div class="border-b border-gray-200 bg-blue-50 p-4 dark:border-gray-800 dark:bg-gray-800">
-                        <div class="flex items-start gap-3">
-                            <span
-                                class="flex-shrink-0 rounded-full bg-blue-100 px-2 py-1 text-xs font-bold text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                TIP
-                            </span>
-                            <div class="flex-1">
-                                <p class="text-sm text-gray-700 dark:text-gray-300">
-                                    @lang('googleads::app.google-ads.landing_page_tip')
-                                </p>
-                                <a href="#"
-                                    class="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                                    @lang('googleads::app.google-ads.learn_more')
-                                </a>
-                            </div>
-                            <button
-                                class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Filters & Stats -->
-                    <div class="border-b border-gray-200 p-4 dark:border-gray-800">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-4 text-sm">
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        class="font-semibold text-gray-900 dark:text-white">@lang('googleads::app.google-ads.account'):</span>
-                                    <button class="text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                                        TestLay (6265-1557-84) ▼
-                                    </button>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        class="font-semibold text-gray-900 dark:text-white">@lang('googleads::app.google-ads.date_range'):</span>
-                                    <button class="text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                                        Last 30 days ▼
-                                    </button>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        class="font-semibold text-gray-900 dark:text-white">@lang('googleads::app.google-ads.status'):</span>
-                                    <button class="text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                                        Active ▼
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button
-                                    class="rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                                    @lang('googleads::app.google-ads.attribution_reports')
-                                </button>
-                                <button
-                                    class="rounded-lg bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-700">
-                                    📊 @lang('googleads::app.google-ads.generate_summary')
-                                </button>
-                                <button
-                                    class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
-                                    Export
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Statistics Cards -->
                     @php
-                        $totalImpressions = collect($campaigns)->sum('impressions');
-                        $totalClicks = collect($campaigns)->sum('clicks');
-                        $totalConversions = collect($campaigns)->sum('conversions');
-                        $totalCost = collect($campaigns)->sum('cost');
+                        $totalImpressions = isset($campaigns) ? collect($campaigns)->sum('impressions') : 0;
+                        $totalClicks = isset($campaigns) ? collect($campaigns)->sum('clicks') : 0;
+                        $totalConversions = isset($campaigns) ? collect($campaigns)->sum('conversions') : 0;
+                        $totalCost = isset($campaigns) ? collect($campaigns)->sum('cost') : 0;
                     @endphp
-                    <div class="grid grid-cols-5 gap-4 border-b border-gray-200 p-4 dark:border-gray-800">
+                    <div class="grid grid-cols-5 gap-4 border-b border-gray-200 p-4 dark:border-gray-800" id="statistics-cards">
                         <div class="text-center">
                             <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalImpressions) }}</div>
                             <div class="mt-1 text-xs font-semibold text-gray-600 dark:text-gray-400">
@@ -209,22 +109,6 @@
                         </div>
                     </div>
 
-                    <!-- Edit Columns & Search -->
-                    <div class="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
-                        <button
-                            class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                            📋 @lang('googleads::app.google-ads.edit_columns')
-                        </button>
-                        <div class="flex items-center gap-2">
-                            <input type="text" placeholder="@lang('googleads::app.google-ads.search_campaigns')"
-                                class="rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500" />
-                            <button
-                                class="rounded-lg border border-gray-300 bg-white px-2 py-2 text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                                🔍
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -254,13 +138,31 @@
                                     <th class="px-4 py-3 text-right text-xs font-bold text-gray-900 dark:text-white">
                                         @lang('googleads::app.google-ads.amount_spent') ↓
                                     </th>
+                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-900 dark:text-white">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @if(isset($error))
+                            <tbody id="campaigns-table-body">
+                                @if(!isset($campaigns) && !isset($error))
+                                    <!-- Loading Skeleton State -->
+                                    @for($i = 0; $i < 5; $i++)
+                                    <tr class="border-b border-gray-200 dark:border-gray-800">
+                                        <td class="px-4 py-3"><div class="skeleton h-4 w-32 rounded"></div></td>
+                                        <td class="px-4 py-3"><div class="skeleton h-4 w-24 rounded"></div></td>
+                                        <td class="px-4 py-3"><div class="skeleton h-6 w-16 rounded-full"></div></td>
+                                        <td class="px-4 py-3 text-center"><div class="skeleton h-4 w-12 rounded mx-auto"></div></td>
+                                        <td class="px-4 py-3 text-center"><div class="skeleton h-4 w-12 rounded mx-auto"></div></td>
+                                        <td class="px-4 py-3 text-center"><div class="skeleton h-4 w-12 rounded mx-auto"></div></td>
+                                        <td class="px-4 py-3 text-center"><div class="skeleton h-4 w-16 rounded mx-auto"></div></td>
+                                        <td class="px-4 py-3 text-right"><div class="skeleton h-4 w-16 rounded ml-auto"></div></td>
+                                        <td class="px-4 py-3 text-center"><div class="skeleton h-6 w-24 rounded mx-auto"></div></td>
+                                    </tr>
+                                    @endfor
+                                @elseif(isset($error))
                                     <!-- Error State -->
                                     <tr>
-                                        <td colspan="8" class="px-4 py-12 text-center">
+                                        <td colspan="9" class="px-4 py-12 text-center">
                                             <div class="flex flex-col items-center justify-center">
                                                 <div class="mb-4 text-6xl">⚠️</div>
                                                 <p class="text-red-600 dark:text-red-400 font-semibold">
@@ -275,7 +177,7 @@
                                 @elseif(empty($campaigns))
                                     <!-- Empty State -->
                                     <tr>
-                                        <td colspan="8" class="px-4 py-12 text-center">
+                                        <td colspan="9" class="px-4 py-12 text-center">
                                             <div class="flex flex-col items-center justify-center">
                                                 <div class="mb-4 text-6xl">🔍</div>
                                                 <p class="text-gray-600 dark:text-gray-400">
@@ -291,11 +193,11 @@
                                     <!-- Campaigns Data -->
                                     @foreach($campaigns as $campaign)
                                         <tr class="border-b border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800">
-                                            <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
+                                            <td class="px-4 py-3 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400">
                                                 {{ $campaign['name'] }}
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                                TestLay
+                                                {{ $account_name ?? 'N/A' }}
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                                 <span class="rounded-full px-2 py-1 text-xs font-medium 
@@ -318,6 +220,27 @@
                                             <td class="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
                                                 ${{ number_format($campaign['cost'], 2) }}
                                             </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="{{ route('admin.google_ads.campaigns.show', $campaign['id']) }}" 
+                                                        class="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-600">
+                                                        View
+                                                    </a>
+                                                    <a href="{{ route('admin.google_ads.campaigns.edit', $campaign['id']) }}" 
+                                                        class="rounded-lg bg-green-500 px-3 py-1 text-xs font-medium text-white hover:bg-green-600">
+                                                        Edit
+                                                    </a>
+                                                    <form action="{{ route('admin.google_ads.campaigns.destroy', $campaign['id']) }}" method="POST" class="inline"
+                                                        onsubmit="return confirm('Are you sure you want to delete this campaign?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" 
+                                                            class="rounded-lg bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-600">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -325,11 +248,7 @@
                         </table>
                     </div>
 
-                    <!-- Footer Info -->
-                    <div
-                        class="border-t border-gray-200 px-4 py-2 text-right text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
-                        @lang('googleads::app.google-ads.reporting_note')
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -349,6 +268,64 @@
                 btn.addEventListener('click', function () {
                     this.closest('.alert').style.display = 'none';
                 });
+            });
+
+            // Simple dropdown toggles (fallback if Alpine.js not present)
+            (function () {
+                function closeAllDropdowns() {
+                    document.querySelectorAll('[data-dropdown-menu]').forEach(menu => {
+                        menu.style.display = 'none';
+                        menu.removeAttribute('data-open');
+                    });
+                }
+
+                document.addEventListener('click', function (e) {
+                    const toggle = e.target.closest('[data-dropdown-toggle]');
+                    if (toggle) {
+                        const key = toggle.getAttribute('data-dropdown-toggle');
+                        const menu = document.querySelector('[data-dropdown-menu="' + key + '"]');
+                        if (!menu) return;
+                        // Toggle this menu
+                        const isOpen = menu.getAttribute('data-open') === 'true';
+                        closeAllDropdowns();
+                        if (!isOpen) {
+                            menu.style.display = 'block';
+                            menu.setAttribute('data-open', 'true');
+                        }
+                        e.stopPropagation();
+                        return;
+                    }
+                    // Clicked outside, close all
+                    closeAllDropdowns();
+                });
+
+                // Close on ESC
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') closeAllDropdowns();
+                });
+            })();
+
+            // Loading state management
+            document.addEventListener('DOMContentLoaded', function() {
+                const tableBody = document.getElementById('campaigns-table-body');
+                const statsCards = document.getElementById('statistics-cards');
+                
+                // Check if we have error state
+                const hasError = tableBody && tableBody.querySelector('td[colspan="8"]')?.textContent.includes('Không thể kết nối');
+                
+                if (hasError) {
+                    console.log('Google Ads API error detected. Data may be temporarily unavailable.');
+                    // Optional: Auto-retry after 5 seconds
+                    // setTimeout(() => window.location.reload(), 5000);
+                }
+
+                // Add loading class during page load
+                if (statsCards) {
+                    statsCards.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        statsCards.classList.remove('animate-pulse');
+                    }, 1000);
+                }
             });
         </script>
     @endPushOnce

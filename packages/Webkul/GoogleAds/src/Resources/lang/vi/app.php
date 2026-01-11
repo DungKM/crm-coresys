@@ -57,5 +57,83 @@ return [
 
         // Settings
         'settings' => 'Cài đặt',
+
+        // Campaign Details
+        'campaign_details' => 'Chi tiết chiến dịch',
+        'back_to_campaigns' => 'Quay lại danh sách',
+        'edit_campaign' => 'Chỉnh sửa chiến dịch',
+        'delete_campaign' => 'Xóa chiến dịch',
+        'campaign_information' => 'Thông tin chiến dịch',
+        'campaign_name' => 'Tên chiến dịch',
+        'campaign_id' => 'Mã chiến dịch',
+        'performance_metrics' => 'Chỉ số hiệu suất',
+        'total_spent' => 'Tổng chi phí',
+        'conversions' => 'Chuyển đổi',
+        'ctr' => 'CTR (Tỷ lệ nhấp)',
+        'cpc' => 'CPC (Chi phí mỗi click)',
+        'cost_per_conversion' => 'Chi phí mỗi chuyển đổi',
+        'quick_actions' => 'Thao tác nhanh',
+        'campaign_settings' => 'Cài đặt chiến dịch',
+        'created_date' => 'Ngày tạo',
+        'last_modified' => 'Cập nhật lần cuối',
+        'budget_type' => 'Loại ngân sách',
+        'daily_budget' => 'Ngân sách hàng ngày',
+        'not_available' => 'Không có dữ liệu',
+        'daily' => 'Hàng ngày',
+        'unknown_status' => 'Không rõ',
+        'learn_more' => 'Tìm hiểu thêm',
+
+        // Quick Actions
+        'pause_campaign' => 'Tạm dừng chiến dịch',
+        'resume_campaign' => 'Tiếp tục chiến dịch',
+        'edit_budget' => 'Chỉnh sửa ngân sách',
+        'manage_targeting' => 'Quản lý nhắm mục tiêu',
+        'view_ad_groups' => 'Xem nhóm quảng cáo',
+        'view_keywords' => 'Xem từ khóa',
+        'performance_report' => 'Báo cáo hiệu suất',
+        'cancel' => 'Hủy',
+        'save_changes' => 'Lưu thay đổi',
+
+        // Create/Edit Form
+        'enter_campaign_name' => 'Nhập tên chiến dịch',
+        'create_new_campaign' => 'Tạo chiến dịch mới',
+        'campaign_goal' => 'Mục tiêu chiến dịch',
+        'campaign_type' => 'Loại chiến dịch',
+        'bidding_strategy' => 'Chiến lược đấu giá',
+        'start_date' => 'Ngày bắt đầu',
+        'end_date' => 'Ngày kết thúc',
+        'select_goal' => 'Chọn mục tiêu',
+        'select_type' => 'Chọn loại',
+        'removed' => 'Đã xóa',
+        'note' => 'Lưu ý',
+
+        // Campaign Goals
+        'goal_sales' => 'Doanh số',
+        'goal_leads' => 'Khách hàng tiềm năng',
+        'goal_website_traffic' => 'Lưu lượng truy cập',
+        'goal_brand_awareness' => 'Nhận diện thương hiệu',
+        'goal_app_promotion' => 'Quảng bá ứng dụng',
+
+        // Campaign Types
+        'type_search' => 'Tìm kiếm',
+        'type_display' => 'Hiển thị',
+        'type_video' => 'Video',
+        'type_shopping' => 'Mua sắm',
+        'type_performance_max' => 'Hiệu suất tối đa',
+
+        // Bidding Strategies
+        'bid_maximize_conversions' => 'Tối đa hóa chuyển đổi',
+        'bid_target_cpa' => 'Mục tiêu CPA',
+        'bid_manual_cpc' => 'CPC thủ công',
+        'bid_maximize_clicks' => 'Tối đa hóa lượt nhấp',
+
+        // Tips & Notes
+        'campaign_tips' => 'Mẹo chiến dịch',
+        'tip_clear_name' => 'Chọn tên chiến dịch rõ ràng, mô tả',
+        'tip_realistic_budget' => 'Đặt ngân sách hàng ngày thực tế',
+        'tip_right_type' => 'Chọn loại chiến dịch phù hợp với mục tiêu',
+        'tip_monitor_performance' => 'Theo dõi hiệu suất thường xuyên',
+        'campaign_create_note' => 'Chiến dịch sẽ được tạo trong Google Ads ngay lập tức',
+        'campaign_sync_note' => 'Thay đổi sẽ được đồng bộ với Google Ads API. Một số trường có thể mất thời gian để phản ánh trong bảng điều khiển Google Ads.',
     ],
 ];

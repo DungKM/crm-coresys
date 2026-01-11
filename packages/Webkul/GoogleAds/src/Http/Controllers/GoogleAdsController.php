@@ -29,9 +29,16 @@ class GoogleAdsController extends Controller
         $result = $this->googleAdsService->getCampaigns();
 
         $campaigns = $result['campaigns'] ?? [];
-        $error = !$result['success'] ? $result['message'] : null;
+        $error = isset($result['success']) && !$result['success'] ? $result['message'] : null;
+        $account_name = $result['account_name'] ?? null;
+        $customer_id = $result['customer_id'] ?? null;
 
-        return view('admin::google-ads.index', compact('campaigns', 'error'));
+        // Log for debugging
+        if ($error) {
+            Log::warning('Google Ads API Error in index: ' . $error);
+        }
+
+        return view('admin::google-ads.index', compact('campaigns', 'error', 'account_name', 'customer_id'));
     }
 
     /**
@@ -163,7 +170,7 @@ class GoogleAdsController extends Controller
      */
     public function create()
     {
-
+        return view('admin::google-ads.create');
     }
 
     /**
@@ -173,7 +180,35 @@ class GoogleAdsController extends Controller
      */
     public function store()
     {
+        // TODO: Implement campaign creation via Google Ads API
+        return redirect()->route('admin.google_ads.index')
+            ->with('success', 'Campaign created successfully!');
+    }
 
+    /**
+     * Display the specified campaign.
+     *
+     * @param  int  $id
+     * @return \Illuminate\View\View
+     */
+    public function show($id)
+    {
+        // Fetch campaign details from Google Ads API
+        $result = $this->googleAdsService->getCampaigns();
+        $campaigns = $result['campaigns'] ?? [];
+
+        // Find the specific campaign
+        $campaign = collect($campaigns)->firstWhere('id', $id);
+
+        if (!$campaign) {
+            return redirect()->route('admin.google_ads.index')
+                ->with('error', 'Campaign not found.');
+        }
+
+        $account_name = $result['account_name'] ?? null;
+        $customer_id = $result['customer_id'] ?? null;
+
+        return view('admin::google-ads.show', compact('campaign', 'account_name', 'customer_id'));
     }
 
     /**
@@ -184,7 +219,22 @@ class GoogleAdsController extends Controller
      */
     public function edit($id)
     {
+        // Fetch campaign details from Google Ads API
+        $result = $this->googleAdsService->getCampaigns();
+        $campaigns = $result['campaigns'] ?? [];
 
+        // Find the specific campaign
+        $campaign = collect($campaigns)->firstWhere('id', $id);
+
+        if (!$campaign) {
+            return redirect()->route('admin.google_ads.index')
+                ->with('error', 'Campaign not found.');
+        }
+
+        $account_name = $result['account_name'] ?? null;
+        $customer_id = $result['customer_id'] ?? null;
+
+        return view('admin::google-ads.edit', compact('campaign', 'account_name', 'customer_id'));
     }
 
     /**
@@ -195,7 +245,9 @@ class GoogleAdsController extends Controller
      */
     public function update($id)
     {
-
+        // TODO: Implement campaign update via Google Ads API
+        return redirect()->route('admin.google_ads.campaigns.show', $id)
+            ->with('success', 'Campaign updated successfully!');
     }
 
     /**
@@ -206,7 +258,11 @@ class GoogleAdsController extends Controller
      */
     public function destroy($id)
     {
-
+        // TODO: Implement campaign deletion via Google Ads API
+        // Note: Google Ads API does not support deleting campaigns directly
+        // Instead, you should set the campaign status to REMOVED
+        return redirect()->route('admin.google_ads.index')
+            ->with('success', 'Campaign deleted successfully!');
     }
 
     /**

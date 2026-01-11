@@ -15,6 +15,27 @@ Breadcrumbs::for('google_ads.campaigns', function ($trail) {
     $trail->push('Campaigns', route('admin.google_ads.campaigns'));
 });
 
+// Google Ads breadcrumb - campaign show
+Breadcrumbs::for('google_ads.campaigns.show', function ($trail) {
+    $trail->push('Dashboard', route('admin.dashboard.index'));
+    $trail->push('Google Ads', route('admin.google_ads.index'));
+    $trail->push('Campaign Details');
+});
+
+// Google Ads breadcrumb - campaign create
+Breadcrumbs::for('google_ads.campaigns.create', function ($trail) {
+    $trail->push('Dashboard', route('admin.dashboard.index'));
+    $trail->push('Google Ads', route('admin.google_ads.index'));
+    $trail->push('Create Campaign', route('admin.google_ads.campaigns.create'));
+});
+
+// Google Ads breadcrumb - campaign edit
+Breadcrumbs::for('google_ads.campaigns.edit', function ($trail) {
+    $trail->push('Dashboard', route('admin.dashboard.index'));
+    $trail->push('Google Ads', route('admin.google_ads.index'));
+    $trail->push('Edit Campaign');
+});
+
 // Google Ads breadcrumb - settings
 Breadcrumbs::for('google_ads.settings', function ($trail) {
     $trail->push('Dashboard', route('admin.dashboard.index'));

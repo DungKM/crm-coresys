@@ -15,4 +15,22 @@ Route::group([
 
     Route::get('/campaigns', [GoogleAdsController::class, 'campaigns'])
         ->name('admin.google_ads.campaigns');
+
+    Route::get('/campaigns/{id}', [GoogleAdsController::class, 'show'])
+        ->name('admin.google_ads.campaigns.show');
+
+    Route::get('/campaigns/create', [GoogleAdsController::class, 'create'])
+        ->name('admin.google_ads.campaigns.create');
+
+    Route::post('/campaigns', [GoogleAdsController::class, 'store'])
+        ->name('admin.google_ads.campaigns.store');
+
+    Route::get('/campaigns/{id}/edit', [GoogleAdsController::class, 'edit'])
+        ->name('admin.google_ads.campaigns.edit');
+
+    Route::put('/campaigns/{id}', [GoogleAdsController::class, 'update'])
+        ->name('admin.google_ads.campaigns.update');
+
+    Route::delete('/campaigns/{id}', [GoogleAdsController::class, 'destroy'])
+        ->name('admin.google_ads.campaigns.destroy');
 });
