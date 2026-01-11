@@ -1,0 +1,88 @@
+<?php
+
+return [
+    'templates' => [
+        'index' => [
+            'title'        => 'Danh sách mẫu email',
+            'create-btn'   => 'Tạo mẫu email',
+            'table' => [
+                'name'     => 'Tên mẫu',
+                'category' => 'Danh mục',
+                'locale'   => 'Ngôn ngữ',
+                'status'   => 'Trạng thái',
+                'usage'    => 'Lượt sử dụng',
+                'actions'  => 'Hành động',
+            ],
+        ],
+
+        'create' => [
+            'title'              => 'Tạo mẫu email',
+            'save-btn'           => 'Lưu mẫu',
+            'back-btn'           => 'Quay lại',
+            'basic-info'         => 'Thông tin cơ bản',
+            'name'               => 'Tên mẫu',
+            'subject'            => 'Tiêu đề',
+            'content'            => 'Nội dung email',
+            'use-variables'      => 'Bạn có thể sử dụng biến theo cú pháp:',
+            'preview-text'       => 'Nội dung xem trước',
+            'preview-text-hint'  => 'Đoạn mô tả ngắn hiển thị trong hộp thư',
+            'settings'           => 'Cài đặt',
+            'category'           => 'Danh mục',
+            'select-category'    => 'Chọn danh mục',
+            'locale'             => 'Ngôn ngữ',
+            'tags'               => 'Tags',
+            'tags-hint'          => 'Nhập các thẻ, cách nhau bằng dấu phẩy',
+            'is-active'          => 'Kích hoạt mẫu email',
+            'variables'          => 'Biến động',
+            'variables-hint'     => 'Danh sách biến bạn có thể sử dụng trong template.',
+        ],
+
+        'edit' => [
+            'title'                       => 'Chỉnh sửa mẫu email',
+            'save-btn'                    => 'Cập nhật',
+            'preview-btn'                 => 'Xem trước',
+            'back-btn'                    => 'Quay lại',
+            'basic-info'                  => 'Thông tin cơ bản',
+            'name'                        => 'Tên mẫu',
+            'subject'                     => 'Tiêu đề',
+            'content'                     => 'Nội dung',
+            'preview-text'                => 'Văn bản xem trước',
+            'settings'                    => 'Cài đặt',
+            'category'                    => 'Danh mục',
+            'locale'                      => 'Ngôn ngữ',
+            'tags'                        => 'Thẻ',
+            'tags-hint'                   => 'Nhập thẻ, phân cách bởi dấu phẩy',
+            'is-active'                   => 'Kích hoạt mẫu',
+            'quick-actions'               => 'Tác vụ nhanh',
+            'clone-btn'                   => 'Nhân bản',
+            'export-btn'                  => 'Xuất file',
+            'variables-used'              => 'Các biến đã sử dụng',
+            'undefined-variables-warning' => 'Một số biến chưa được khai báo giá trị:',
+        ],
+
+        'show' => [
+            'edit-btn'      => 'Chỉnh sửa',
+            'preview-btn'   => 'Xem trước',
+            'clone-btn'     => 'Nhân bản',
+            'export-btn'    => 'Xuất file',
+            'back-btn'      => 'Quay lại',
+            'basic-info'    => 'Thông tin cơ bản',
+            'subject'       => 'Tiêu đề',
+            'content'       => 'Nội dung',
+            'variables'     => 'Các biến sử dụng',
+            'clone-history' => 'Lịch sử nhân bản',
+            'metadata'      => 'Metadata',
+        ],
+
+        'messages' => [
+            'create-success'  => 'Tạo mẫu email thành công',
+            'update-success'  => 'Cập nhật mẫu email thành công',
+            'delete-success'  => 'Xóa mẫu email thành công',
+            'import-success'  => 'Import mẫu email thành công',
+            'import-error'    => 'File import không hợp lệ',
+            'clone-success'   => 'Nhân bản mẫu email thành công',
+            'status-updated'  => 'Cập nhật trạng thái thành công',
+        ],
+    ],
+];
+
